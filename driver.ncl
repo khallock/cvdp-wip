@@ -4,7 +4,7 @@
 ; to a file named file.out, type: ncl driver.ncl >&! file.out &
 ; 
 ;============================================================================================
-  outdir            = "/project/CVDP/"   ; location of output files   (must end in a "/")
+  outdir            = "/Users/haley/CVDP/PLOTS/"   ; location of output files   (must end in a "/")
                                                            ; It is recommended that a new or empty directory be pointed to here 
                                                            ; as existing files in outdir can get removed.
 
@@ -55,10 +55,11 @@
                          
   max_num_tasks = 4      ; if run_parallel = "parallel", how many CVDP NCL scripts can be called at once? (If unsure set to 3)     
   
-  modular = "False"      ; True = Run only those CVDP scripts specified in modular_list.
+  modular = "True"       ; True = Run only those CVDP scripts specified in modular_list.
                          ; False = Run all CVDP scripts (Default)
 
-  modular_list = "pdo,aice.trends_timeseries,sst.indices"  ; When modular = "True" list the CVDP scripts that will be run. 
+;  modular_list = "pdo,aice.trends_timeseries,sst.indices"  ; When modular = "True" list the CVDP scripts that will be run. 
+  modular_list = "tas.trends_timeseries"
                                            ; Example: modular_list = "amoc,amo,pr.trends_timeseries"
                                            ; For a list of available scripts see complete_list at line 72. 
 
