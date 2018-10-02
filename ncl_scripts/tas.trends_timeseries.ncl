@@ -21,6 +21,7 @@ begin
   CLIMO_EYEAR      = toint(getenv("CLIMO_EYEAR"))
   OUTPUT_TYPE      = getenv("OUTPUT_TYPE") 
   COLORMAP         = getenv("COLORMAP")  
+  OUTPUT_PLOT_DATA = getenv("OUTPUT_PLOT_DATA")  
   
   nsim = numAsciiRow("namelist_byvar/namelist_trefht")
   na = asciiread("namelist_byvar/namelist_trefht",(/nsim/),"string")
@@ -115,18 +116,22 @@ begin
      xy_obs_son = new(nsim,"graphic")  
      xy_obs_ann = new(nsim,"graphic")  
      xy_obs_mon = new(nsim,"graphic")  
-     ncdf_aa_seas_obs = open_file("tas.aa.seas.obs",script_name)
-     ncdf_aa_ann_obs  = open_file("tas.aa.ann.obs",script_name)
-     ncdf_aa_mon_obs  = open_file("tas.aa.mon.obs",script_name)
+     if (OUTPUT_PLOT_DATA.eq."True") then
+       ncdf_aa_seas_obs = open_file_for_plot_data("tas.aa.seas.obs",script_name)
+       ncdf_aa_ann_obs  = open_file_for_plot_data("tas.aa.ann.obs",script_name)
+       ncdf_aa_mon_obs  = open_file_for_plot_data("tas.aa.mon.obs",script_name)
+     end if
   end if
   do ee = 0,nsim-1
-     ncdf_trends_seas = open_file("tas.trends.seas.ee"+ee,script_name)
-     ncdf_trends_ann  = open_file("tas.trends.ann.ee"+ee,script_name)
-     ncdf_trends_mon  = open_file("tas.trends.mon.ee"+ee,script_name)
-     ncdf_aa_seas     = open_file("tas.aa.seas.ee"+ee,script_name)
-     ncdf_aa_ann      = open_file("tas.aa.ann.ee"+ee,script_name)
-     ncdf_aa_mon      = open_file("tas.aa.mon.ee"+ee,script_name)
-     ncdf_rt_mon      = open_file("tas.rt.mon.ee"+ee,script_name)
+     if (OUTPUT_PLOT_DATA.eq."True") then
+       ncdf_trends_seas = open_file_for_plot_data("tas.trends.seas.ee"+ee,script_name)
+       ncdf_trends_ann  = open_file_for_plot_data("tas.trends.ann.ee"+ee,script_name)
+       ncdf_trends_mon  = open_file_for_plot_data("tas.trends.mon.ee"+ee,script_name)
+       ncdf_aa_seas     = open_file_for_plot_data("tas.aa.seas.ee"+ee,script_name)
+       ncdf_aa_ann      = open_file_for_plot_data("tas.aa.ann.ee"+ee,script_name)
+       ncdf_aa_mon      = open_file_for_plot_data("tas.aa.mon.ee"+ee,script_name)
+       ncdf_rt_mon      = open_file_for_plot_data("tas.rt.mon.ee"+ee,script_name)
+     end if
 
      tas = data_read_in(paths(ee),"TREFHT",syear(ee),eyear(ee))    ; read in data, orient lats/lons correctly, set time coordinate variable up
      if (isatt(tas,"is_all_missing")) then
@@ -341,10 +346,11 @@ begin
      map_mon(ee) = gsn_csm_contour_map(wks_trends_mon,tas_trends_mon,res)
 
 ;---Write intermediate data used for contour plots
-     ncdf_trends_seas->tas_trends_seas = tas_trends_seas
-     ncdf_trends_ann->tas_trends_ann   = tas_trends_ann
-     ncdf_trends_mon->tas_trends_mon   = tas_trends_mon
-
+     if (OUTPUT_PLOT_DATA.eq."True") then
+       ncdf_trends_seas->tas_trends_seas = tas_trends_seas
+       ncdf_trends_ann->tas_trends_ann   = tas_trends_ann
+       ncdf_trends_mon->tas_trends_mon   = tas_trends_mon
+     end if
      xyres = True
      xyres@gsnDraw = False
      xyres@gsnFrame = False
@@ -482,19 +488,22 @@ begin
      end do   
          
 ;---Write intermediate data used for XY plots
-     ncdf_aa_seas->tas_aa_seas = tas_aa_seas
-     ncdf_aa_ann->tas_aa_ann   = tas_aa_ann
-     ncdf_aa_mon->tas_aa_mon   = tas_aa_mon
-     ncdf_rt_mon->tas_rt_mon   = tas_rt_mon
-
+     if (OUTPUT_PLOT_DATA.eq."True") then
+       ncdf_aa_seas->tas_aa_seas = tas_aa_seas
+       ncdf_aa_ann->tas_aa_ann   = tas_aa_ann
+       ncdf_aa_mon->tas_aa_mon   = tas_aa_mon
+       ncdf_rt_mon->tas_rt_mon   = tas_rt_mon
+     end if
      delete([/tas_trends_seas,tas_trends_ann,tas_trends_mon/])  
      delete([/tas_aa_seas,tas_aa_mon,tas_aa_ann,xyres,xyres2,res,tttt,tas_rt_mon/])
   end do
   if (isfilepresent2("obs_trefht")) then
 ;---Write intermediate obs data used for XY plots
-     ncdf_aa_seas_obs->tas_aa_seas_obs = tas_aa_seas_obs
-     ncdf_aa_ann_obs->tas_aa_ann_obs   = tas_aa_ann_obs
-     ncdf_aa_mon_obs->tas_aa_mon_obs   = tas_aa_mon_obs
+     if (OUTPUT_PLOT_DATA.eq."True") then
+       ncdf_aa_seas_obs->tas_aa_seas_obs = tas_aa_seas_obs
+       ncdf_aa_ann_obs->tas_aa_ann_obs   = tas_aa_ann_obs
+       ncdf_aa_mon_obs->tas_aa_mon_obs   = tas_aa_mon_obs
+     end if
      delete([/tas_aa_seas_obs,tas_aa_mon_obs,tas_aa_ann_obs/])
   end if
   

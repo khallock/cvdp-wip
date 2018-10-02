@@ -41,6 +41,8 @@
   tar_output        = "False"               ; True = tar up all output in outdir and remove individual files, False = do not                                      
                                             ; Note: ALL files in outdir will be tarred up and then removed from the outdir directory. 
 
+  output_plot_data   = "True"           ; False = write plot data to intermediate NetCDF files (for NCL-to-Python Pilot project)
+
 ;---Advanced Options----------------------------------------------------------------------                                             
   zp = "ncl_scripts/"    ; directory path of CVDP NCL scripts. (must end in a "/")
                          ; Examples: "ncl_scripts/" if all code is local, or on CGD or CISL systems: "~asphilli/CESM-diagnostics/CVDP/Release/v4.1.0/ncl_scripts/"
@@ -103,7 +105,8 @@
          "export OUTPUT_DATA="+output_data+";   export VERSION="+version+";   export PNG_SCALE="+png_scale+";   "+\
          "export OPT_CLIMO="+opt_climo+";   export CLIMO_SYEAR="+climo_syear+";   export CLIMO_EYEAR="+climo_eyear+";   "+\
          "export COMPUTE_MODES_MON="+compute_modes_mon+";   export OUTPUT_TYPE="+output_type+";   export MACHINE="+machine_casesen+";   "+\
-         "export COLORMAP="+colormap+";   export CVDP_SCRIPTS="+zp+";   export MAX_TASKS="+max_num_tasks+";"  
+         "export COLORMAP="+colormap+";   export CVDP_SCRIPTS="+zp+";   export MAX_TASKS="+max_num_tasks+";   "+\
+         "export OUTPUT_PLOT_DATA="+output_plot_data+";"
   ncl_exec = ncl_exec+" -n -Q" 
 
   system(envvar_str + " "+str_sub_str(ncl_exec," -Q","")+" "+zp+"namelist.ncl")     ; create variable namelists
