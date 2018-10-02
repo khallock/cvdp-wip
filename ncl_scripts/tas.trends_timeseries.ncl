@@ -7,9 +7,11 @@ load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/gsn_csm.ncl"
 load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/contributed.ncl"
 load "$NCARG_ROOT/lib/ncarg/nclscripts/csm/shea_util.ncl"
 load "$CVDP_SCRIPTS/functions.ncl"
+load "$CVDP_SCRIPTS/tas_utils.ncl"
 
 begin
-  print("Starting: tas.trends_timeseries.ncl")
+  script_name = get_script_prefix_name()
+  print("Starting: " + script_name)
   
   SCALE_TIMESERIES = getenv("SCALE_TIMESERIES")  
   OUTPUT_DATA      = getenv("OUTPUT_DATA")  
@@ -115,6 +117,19 @@ begin
      xy_obs_mon = new(nsim,"graphic")  
   end if
   do ee = 0,nsim-1
+     ncdf_trends_seas = open_file("tas.trends.seas.ee"+ee,script_name)
+     ncdf_trends_ann  = open_file("tas.trends.ann.ee"+ee,script_name)
+     ncdf_trends_mon  = open_file("tas.trends.mon.ee"+ee,script_name)
+     ncdf_aa_seas     = open_file("tas.aa.seas.ee"+ee,script_name)
+     ncdf_aa_ann      = open_file("tas.aa.ann.ee"+ee,script_name)
+     ncdf_aa_mon      = open_file("tas.aa.mon.ee"+ee,script_name)
+     ncdf_rt_mon      = open_file("tas.rt.mon.ee"+ee,script_name)
+     if (isfilepresent2("obs_trefht")) then
+       ncdf_aa_seas_obs = open_file("tas.aa.seas.obs.ee"+ee,script_name)
+       ncdf_aa_ann_obs  = open_file("tas.aa.ann.obs.ee"+ee,script_name)
+       ncdf_aa_mon_obs  = open_file("tas.aa.mon.obs.ee"+ee,script_name)
+     end if
+
      tas = data_read_in(paths(ee),"TREFHT",syear(ee),eyear(ee))    ; read in data, orient lats/lons correctly, set time coordinate variable up
      if (isatt(tas,"is_all_missing")) then
         delete(tas)
@@ -238,7 +253,7 @@ begin
               end if
            end if
            z@Conventions = "CF-1.6" 
-       else
+        else
            z = addfile(fn,"w")
         end if
         tas_aa_seas2 = tas_aa_seas
@@ -323,6 +338,11 @@ begin
      map_son(ee) = gsn_csm_contour_map(wks_trends_son,tas_trends_seas(3,:,:),res)
      map_ann(ee) = gsn_csm_contour_map(wks_trends_ann,tas_trends_ann,res)
      map_mon(ee) = gsn_csm_contour_map(wks_trends_mon,tas_trends_mon,res)
+
+;---Write intermediate data used for contour plots
+     ncdf_trends_seas->tas_trends_seas = tas_trends_seas
+     ncdf_trends_ann->tas_trends_ann   = tas_trends_ann
+     ncdf_trends_mon->tas_trends_mon   = tas_trends_mon
 
      xyres = True
      xyres@gsnDraw = False
@@ -460,10 +480,20 @@ begin
         end if
      end do   
          
+;---Write intermediate data used for XY plots
+     ncdf_aa_seas->tas_aa_seas = tas_aa_seas
+     ncdf_aa_ann->tas_aa_ann   = tas_aa_ann
+     ncdf_aa_mon->tas_aa_mon   = tas_aa_mon
+     ncdf_rt_mon->tas_rt_mon   = tas_rt_mon
+
      delete([/tas_trends_seas,tas_trends_ann,tas_trends_mon/])  
      delete([/tas_aa_seas,tas_aa_mon,tas_aa_ann,xyres,xyres2,res,tttt,tas_rt_mon/])
   end do
   if (isfilepresent2("obs_trefht")) then
+;---Write intermediate obs data used for XY plots
+     ncdf_aa_seas_obs->tas_aa_seas_obs = tas_aa_seas_obs
+     ncdf_aa_ann_obs->tas_aa_ann_obs   = tas_aa_ann_obs
+     ncdf_aa_mon_obs->tas_aa_mon_obs   = tas_aa_mon_obs
      delete([/tas_aa_seas_obs,tas_aa_mon_obs,tas_aa_ann_obs/])
   end if
   
