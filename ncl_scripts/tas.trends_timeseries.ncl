@@ -293,57 +293,12 @@ begin
         delete([/tas_aa_seas2,tas_aa_ann2/])
      end if    
 ;========================================================================
-     res = True
-     res@mpProjection = "WinkelTripel"
-     res@mpGeophysicalLineColor = "gray42"
-     if (wks_type.eq."png") then
-        res@mpGeophysicalLineThicknessF = 2.  
-     else
-        res@mpGeophysicalLineThicknessF = 1.  
-     end if     
-     res@mpPerimOn    = False
-     res@mpGridLatSpacingF =  90            ; change latitude  line spacing
-     res@mpGridLonSpacingF = 180.           ; change longitude line spacing
-     res@mpGridLineColor   = "transparent"  ; trick ncl into drawing perimeter
-     res@mpGridAndLimbOn   = True           ; turn on lat/lon lines  
-     res@mpFillOn = False
-     res@mpCenterLonF = 210.
-     res@mpOutlineOn = True  
-     res@gsnDraw      = False
-     res@gsnFrame     = False
-  
-     res@cnLevelSelectionMode = "ExplicitLevels"
-     if (COLORMAP.eq.0) then
-        res@cnLevels = (/-8,-6,-5,-4,-3,-2,-1,-0.5,-0.25,0,0.25,0.5,1,2,3,4,5,6,8/)
-     end if
-     if (COLORMAP.eq.1) then
-        res@cnLevels = (/-6,-4,-3,-2,-1,-0.5,-0.25,0,0.25,0.5,1,2,3,4,6/)
-     end if
-
-     res@cnLineLabelsOn = False
-     res@cnFillOn        = True
-     res@cnLinesOn       = False
-     res@lbLabelBarOn    = False
-
-     res@gsnLeftStringOrthogonalPosF = -0.05
-     res@gsnLeftStringParallelPosF = .005
-     res@gsnRightStringOrthogonalPosF = -0.05
-     res@gsnRightStringParallelPosF = 0.96
-     res@gsnRightString = ""
-     res@gsnLeftString = ""
-     res@gsnLeftStringFontHeightF = 0.014
-     res@gsnCenterStringFontHeightF = 0.018
-     res@gsnRightStringFontHeightF = 0.014
-     res@gsnLeftString = syear(ee)+"-"+eyear(ee)
- 
-     res@gsnRightString = tas_trends_seas@units
-     res@gsnCenterString = names(ee)
-     map_djf(ee) = gsn_csm_contour_map(wks_trends_djf,tas_trends_seas(0,:,:),res)
-     map_mam(ee) = gsn_csm_contour_map(wks_trends_mam,tas_trends_seas(1,:,:),res)
-     map_jja(ee) = gsn_csm_contour_map(wks_trends_jja,tas_trends_seas(2,:,:),res)
-     map_son(ee) = gsn_csm_contour_map(wks_trends_son,tas_trends_seas(3,:,:),res)
-     map_ann(ee) = gsn_csm_contour_map(wks_trends_ann,tas_trends_ann,res)
-     map_mon(ee) = gsn_csm_contour_map(wks_trends_mon,tas_trends_mon,res)
+     map_djf(ee) = create_contour_map_plot(wks_trends_djf,tas_trends_seas(0,:,:),names(ee),syear(ee),eyear(ee),COLORMAP)
+     map_mam(ee) = create_contour_map_plot(wks_trends_mam,tas_trends_seas(1,:,:),names(ee),syear(ee),eyear(ee),COLORMAP)
+     map_jja(ee) = create_contour_map_plot(wks_trends_jja,tas_trends_seas(2,:,:),names(ee),syear(ee),eyear(ee),COLORMAP)
+     map_son(ee) = create_contour_map_plot(wks_trends_son,tas_trends_seas(3,:,:),names(ee),syear(ee),eyear(ee),COLORMAP)
+     map_ann(ee) = create_contour_map_plot(wks_trends_ann,tas_trends_ann,names(ee),syear(ee),eyear(ee),COLORMAP)
+     map_mon(ee) = create_contour_map_plot(wks_trends_mon,tas_trends_mon,names(ee),syear(ee),eyear(ee),COLORMAP)
 
 ;---Write intermediate data used for contour plots
      if (OUTPUT_PLOT_DATA.eq."True") then
@@ -495,7 +450,7 @@ begin
        ncdf_rt_mon->tas_rt_mon   = tas_rt_mon
      end if
      delete([/tas_trends_seas,tas_trends_ann,tas_trends_mon/])  
-     delete([/tas_aa_seas,tas_aa_mon,tas_aa_ann,xyres,xyres2,res,tttt,tas_rt_mon/])
+     delete([/tas_aa_seas,tas_aa_mon,tas_aa_ann,xyres,xyres2,tttt,tas_rt_mon/])
   end do
   if (isfilepresent2("obs_trefht")) then
 ;---Write intermediate obs data used for XY plots
