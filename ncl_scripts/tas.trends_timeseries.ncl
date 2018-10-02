@@ -115,6 +115,9 @@ begin
      xy_obs_son = new(nsim,"graphic")  
      xy_obs_ann = new(nsim,"graphic")  
      xy_obs_mon = new(nsim,"graphic")  
+     ncdf_aa_seas_obs = open_file("tas.aa.seas.obs",script_name)
+     ncdf_aa_ann_obs  = open_file("tas.aa.ann.obs",script_name)
+     ncdf_aa_mon_obs  = open_file("tas.aa.mon.obs",script_name)
   end if
   do ee = 0,nsim-1
      ncdf_trends_seas = open_file("tas.trends.seas.ee"+ee,script_name)
@@ -124,11 +127,6 @@ begin
      ncdf_aa_ann      = open_file("tas.aa.ann.ee"+ee,script_name)
      ncdf_aa_mon      = open_file("tas.aa.mon.ee"+ee,script_name)
      ncdf_rt_mon      = open_file("tas.rt.mon.ee"+ee,script_name)
-     if (isfilepresent2("obs_trefht")) then
-       ncdf_aa_seas_obs = open_file("tas.aa.seas.obs.ee"+ee,script_name)
-       ncdf_aa_ann_obs  = open_file("tas.aa.ann.obs.ee"+ee,script_name)
-       ncdf_aa_mon_obs  = open_file("tas.aa.mon.obs.ee"+ee,script_name)
-     end if
 
      tas = data_read_in(paths(ee),"TREFHT",syear(ee),eyear(ee))    ; read in data, orient lats/lons correctly, set time coordinate variable up
      if (isatt(tas,"is_all_missing")) then
@@ -174,6 +172,7 @@ begin
      tas_trends_seas = tas_trends_seas@_FillValue
      tas_trends_ann  = tas_trends_seas(0,:,:)
      tas_aa_seas = new((/4,nyr(ee)/),typeof(tas_seas))
+     tas_aa_seas!0 = "season"
      tas_aa_seas!1 = "time"
      tas_aa_seas&time = ispan(syear(ee),eyear(ee),1)
      tas_aa_seas&time@units = "YYYY"
@@ -216,12 +215,14 @@ begin
      end if
      
      dimT = dimsizes(tas_aa_mon)      ; calculate running trends from the monthly data
+     rt_nyr = (/8,10,12,14,16/)
      tas_rt_mon = new((/5,dimT/),typeof(tas_aa_mon))
+     tas_rt_mon!0 = "rt_year"
      tas_rt_mon!1 = "time"
      tas_rt_mon&time = tas_aa_mon&time    
+     tas_rt_mon&rt_year = rt_nyr
      copy_VarAtts(tas_aa_mon,tas_rt_mon)
      tas_rt_mon@long_name =  tas_rt_mon@long_name+" global average running trend"
-     rt_nyr = (/8,10,12,14,16/)
      do ff = 0,dimsizes(rt_nyr)-1
         incr = rt_nyr(ff)*12
         do gg = 0,dimT-incr-1
