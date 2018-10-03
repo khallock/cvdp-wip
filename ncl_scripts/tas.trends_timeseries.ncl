@@ -266,12 +266,12 @@ begin
         delete([/tas_aa_seas2,tas_aa_ann2/])
      end if    
 ;========================================================================
-     map_djf(ee) = create_contour_map_plot(wks_trends_djf,tas_trends_seas(0,:,:),names(ee),syear(ee),eyear(ee))
-     map_mam(ee) = create_contour_map_plot(wks_trends_mam,tas_trends_seas(1,:,:),names(ee),syear(ee),eyear(ee))
-     map_jja(ee) = create_contour_map_plot(wks_trends_jja,tas_trends_seas(2,:,:),names(ee),syear(ee),eyear(ee))
-     map_son(ee) = create_contour_map_plot(wks_trends_son,tas_trends_seas(3,:,:),names(ee),syear(ee),eyear(ee))
-     map_ann(ee) = create_contour_map_plot(wks_trends_ann,tas_trends_ann,names(ee),syear(ee),eyear(ee))
-     map_mon(ee) = create_contour_map_plot(wks_trends_mon,tas_trends_mon,names(ee),syear(ee),eyear(ee))
+     map_djf(ee) = create_contour_map_plot(wks_trends_djf,tas_trends_seas(0,:,:),names,syear,eyear,ee)
+     map_mam(ee) = create_contour_map_plot(wks_trends_mam,tas_trends_seas(1,:,:),names,syear,eyear,ee)
+     map_jja(ee) = create_contour_map_plot(wks_trends_jja,tas_trends_seas(2,:,:),names,syear,eyear,ee)
+     map_son(ee) = create_contour_map_plot(wks_trends_son,tas_trends_seas(3,:,:),names,syear,eyear,ee)
+     map_ann(ee) = create_contour_map_plot(wks_trends_ann,tas_trends_ann,names,syear,eyear,ee)
+     map_mon(ee) = create_contour_map_plot(wks_trends_mon,tas_trends_mon,names,syear,eyear,ee)
 
 ;---Write intermediate data used for contour plots
      if (OUTPUT_PLOT_DATA.eq."True") then

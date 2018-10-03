@@ -24,8 +24,8 @@ end
 ; Create a contour/map plot
 ;
 undef("create_contour_map_plot")
-function create_contour_map_plot(wks[1]:graphic,data[*][*]:numeric,name[1]:string,\
-         syear,eyear)
+function create_contour_map_plot(wks[1]:graphic,data[*][*]:numeric,names[*]:string,\
+         syear[*],eyear[*],ee[1]:integer)
 local res
 begin
      COLORMAP = toint(getenv("COLORMAP"))
@@ -78,10 +78,10 @@ begin
      res@gsnLeftStringFontHeightF = 0.014
      res@gsnCenterStringFontHeightF = 0.018
      res@gsnRightStringFontHeightF = 0.014
-     res@gsnLeftString = syear+"-"+eyear
+     res@gsnLeftString = syear(ee)+"-"+eyear(ee)
 
      res@gsnRightString = data@units
-     res@gsnCenterString = name
+     res@gsnCenterString = names(ee)
 
      plot = gsn_csm_contour_map(wks,data,res)
      return(plot)
@@ -92,7 +92,7 @@ end
 ;
 undef("create_xy_plot")
 function create_xy_plot(wks[1]:graphic,data:numeric,data_obs:numeric,units[1]:string,\
-                        names[*]:string,syear,eyear,ee,plot_type)
+                        names[*]:string,syear[*],eyear[*],ee[1]:integer,plot_type)
 local nsim, nyr, nyr_max, xyres, xyres2, SCALE_TIMESERIES, tttt, plot_overlay
 begin
      nsim = dimsizes(syear)
