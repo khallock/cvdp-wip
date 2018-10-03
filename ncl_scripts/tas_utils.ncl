@@ -145,8 +145,11 @@ begin
      tttt = dtrend_msg(ispan(0,dimsizes(data&time)-1,1),data,False,True)
      if(plot_type.eq."rt")
        xyres@gsnRightString = units
+     else if(plot_type.eq."mon")
+       xyres@gsnRightString = decimalPlaces(tttt@slope*dimsizes(data&time),2,True)+units
      else
        xyres@gsnRightString = decimalPlaces(tttt@slope*nyr(ee),2,True)+units
+     end if
      end if
      if (isfilepresent2("obs_trefht").and.ee.ge.1) then
         xyres@trYMinF = min((/min(data),min(data_obs)/))-.01
@@ -159,22 +162,24 @@ begin
 ; Note: data_obs is not really observational data for the "rt" case. We needed a variable with
 ; a time coordinate array, so data_obs is being used as a placeholder for this.
 ;
-       plot_base  = gsn_csm_xy(wks,fspan(syear(ee),eyear(ee)+.91667,dimsizes(data_obs&time)),data,xyres)
+       plot_base = gsn_csm_xy(wks,fspan(syear(ee),eyear(ee)+.91667,dimsizes(data_obs&time)),data,xyres)
      else
-       plot_base  = gsn_csm_xy(wks,ispan(syear(ee),eyear(ee),1),data,xyres)
+       plot_base = gsn_csm_xy(wks,ispan(syear(ee),eyear(ee),1),data,xyres)
      end if
      end if
      if(plot_type.eq."rt")
         return(plot_base)
      end if
      if (isfilepresent2("obs_trefht").and.ee.ge.1) then
-        overlay_string = "plot_overlay"+ee
+        overlay_string = "plot_overlay_"+plot_type+"_"+ee
         if(plot_type.eq."mon") then
-          plot_base@$overlay_string$ = gsn_csm_xy(wks,fspan(data_obs@syear,data_obs@eyear+.91667,dimsizes(data_obs)),data_obs,xyres2)
+          plot_tmp = gsn_csm_xy(wks,fspan(data_obs@syear,data_obs@eyear+.91667,dimsizes(data_obs)),data_obs,xyres2)
         else
-          plot_base@$overlay_string$ = gsn_csm_xy(wks,ispan(data_obs@syear,data_obs@eyear,1),data_obs,xyres2)
+          plot_tmp = gsn_csm_xy(wks,ispan(data_obs@syear,data_obs@eyear,1),data_obs,xyres2)
         end if
-        overlay(plot_base,plot_base@$overlay_string$)
+        overlay(plot_base,plot_tmp)
+        copy_VarAtts(plot_tmp,plot_base)     ; Make sure plot_tmp's graphics attributes live outside this function!
+        plot_base@$overlay_string$ = plot_tmp
      end if
      return(plot_base)
 end

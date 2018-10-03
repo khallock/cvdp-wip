@@ -311,7 +311,7 @@ begin
      xy_jja(ee) = create_xy_plot(wks_aa_jja,tas_aa_seas(2,:),tas_aa_seas_obs(2,:),tas_trends_seas@units,names,syear,eyear,ee,nsim,COLORMAP,"seas")
      xy_son(ee) = create_xy_plot(wks_aa_son,tas_aa_seas(3,:),tas_aa_seas_obs(3,:),tas_trends_seas@units,names,syear,eyear,ee,nsim,COLORMAP,"seas")
      xy_ann(ee) = create_xy_plot(wks_aa_ann,tas_aa_ann,tas_aa_ann_obs,tas_trends_ann@units,names,syear,eyear,ee,nsim,COLORMAP,"ann")
-     xy_mon(ee) = create_xy_plot(wks_aa_mon,tas_aa_mon,tas_aa_mon_obs,tas_trends_seas@units,names,syear,eyear,ee,nsim,COLORMAP,"mon")
+     xy_mon(ee) = create_xy_plot(wks_aa_mon,tas_aa_mon,tas_aa_mon_obs,tas_trends_mon@units,names,syear,eyear,ee,nsim,COLORMAP,"mon")
      
      do ff = 0,4
         if (.not.all(ismissing(tas_rt_mon(ff,:))))     
