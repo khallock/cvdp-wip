@@ -27,7 +27,7 @@ function create_contour_map_plot(wks[1]:graphic,data[*][*]:numeric,name[1]:strin
          start_year,end_year)
 local res
 begin
-     COLORMAP = getenv("COLORMAP")  
+     COLORMAP = toint(getenv("COLORMAP"))
 
      res = True
      res@mpProjection = "WinkelTripel"
@@ -60,6 +60,13 @@ begin
      res@cnFillOn        = True
      res@cnLinesOn       = False
      res@lbLabelBarOn    = False
+
+     if (COLORMAP.eq.0) then
+       res@cnFillPalette = "ncl_default"
+     end if
+     if (COLORMAP.eq.1) then
+       res@cnFillPalette = "BlueDarkRed18"
+     end if
 
      res@gsnLeftStringOrthogonalPosF = -0.05
      res@gsnLeftStringParallelPosF = .005

@@ -20,9 +20,10 @@ begin
   CLIMO_SYEAR      = toint(getenv("CLIMO_SYEAR"))
   CLIMO_EYEAR      = toint(getenv("CLIMO_EYEAR"))
   OUTPUT_TYPE      = getenv("OUTPUT_TYPE") 
-  COLORMAP         = getenv("COLORMAP")  
+  COLORMAP         = toint(getenv("COLORMAP"))
   OUTPUT_PLOT_DATA = getenv("OUTPUT_PLOT_DATA")  
-  
+  OUTDIR           = getenv("OUTDIR")
+
   nsim = numAsciiRow("namelist_byvar/namelist_trefht")
   na = asciiread("namelist_byvar/namelist_trefht",(/nsim/),"string")
   names = new(nsim,"string")
@@ -48,52 +49,22 @@ begin
      wks_type@wkWidth = 1500*PNG_SCALE
      wks_type@wkHeight = 1500*PNG_SCALE
   end if
-  wks_trends_djf = gsn_open_wks(wks_type,getenv("OUTDIR")+"tas.trends.djf")
-  wks_trends_mam = gsn_open_wks(wks_type,getenv("OUTDIR")+"tas.trends.mam")
-  wks_trends_jja = gsn_open_wks(wks_type,getenv("OUTDIR")+"tas.trends.jja")
-  wks_trends_son = gsn_open_wks(wks_type,getenv("OUTDIR")+"tas.trends.son")
-  wks_trends_ann = gsn_open_wks(wks_type,getenv("OUTDIR")+"tas.trends.ann")
-  wks_trends_mon = gsn_open_wks(wks_type,getenv("OUTDIR")+"tas.trends.mon")
+  wks_trends_djf = gsn_open_wks(wks_type,OUTDIR+"tas.trends.djf")
+  wks_trends_mam = gsn_open_wks(wks_type,OUTDIR+"tas.trends.mam")
+  wks_trends_jja = gsn_open_wks(wks_type,OUTDIR+"tas.trends.jja")
+  wks_trends_son = gsn_open_wks(wks_type,OUTDIR+"tas.trends.son")
+  wks_trends_ann = gsn_open_wks(wks_type,OUTDIR+"tas.trends.ann")
+  wks_trends_mon = gsn_open_wks(wks_type,OUTDIR+"tas.trends.mon")
     
-  wks_aa_djf = gsn_open_wks(wks_type,getenv("OUTDIR")+"tas.timeseries.djf")
-  wks_aa_mam = gsn_open_wks(wks_type,getenv("OUTDIR")+"tas.timeseries.mam")
-  wks_aa_jja = gsn_open_wks(wks_type,getenv("OUTDIR")+"tas.timeseries.jja")
-  wks_aa_son = gsn_open_wks(wks_type,getenv("OUTDIR")+"tas.timeseries.son")
-  wks_aa_ann = gsn_open_wks(wks_type,getenv("OUTDIR")+"tas.timeseries.ann")
-  wks_aa_mon = gsn_open_wks(wks_type,getenv("OUTDIR")+"tas.timeseries.mon")
+  wks_aa_djf = gsn_open_wks(wks_type,OUTDIR+"tas.timeseries.djf")
+  wks_aa_mam = gsn_open_wks(wks_type,OUTDIR+"tas.timeseries.mam")
+  wks_aa_jja = gsn_open_wks(wks_type,OUTDIR+"tas.timeseries.jja")
+  wks_aa_son = gsn_open_wks(wks_type,OUTDIR+"tas.timeseries.son")
+  wks_aa_ann = gsn_open_wks(wks_type,OUTDIR+"tas.timeseries.ann")
+  wks_aa_mon = gsn_open_wks(wks_type,OUTDIR+"tas.timeseries.mon")
   
-  wks_rt_mon = gsn_open_wks(wks_type,getenv("OUTDIR")+"tas.runtrend.mon")
+  wks_rt_mon = gsn_open_wks(wks_type,OUTDIR+"tas.runtrend.mon")
 
-  if (COLORMAP.eq.0) then
-     gsn_define_colormap(wks_trends_djf,"ncl_default")   
-     gsn_define_colormap(wks_trends_mam,"ncl_default")  
-     gsn_define_colormap(wks_trends_jja,"ncl_default") 
-     gsn_define_colormap(wks_trends_son,"ncl_default") 
-     gsn_define_colormap(wks_trends_ann,"ncl_default") 
-     gsn_define_colormap(wks_trends_mon,"ncl_default") 
-     gsn_define_colormap(wks_aa_djf,"ncl_default")   
-     gsn_define_colormap(wks_aa_mam,"ncl_default")  
-     gsn_define_colormap(wks_aa_jja,"ncl_default") 
-     gsn_define_colormap(wks_aa_son,"ncl_default") 
-     gsn_define_colormap(wks_aa_ann,"ncl_default") 
-     gsn_define_colormap(wks_aa_mon,"ncl_default") 
-     gsn_define_colormap(wks_rt_mon,"ncl_default") 
-  end if
-  if (COLORMAP.eq.1) then
-     gsn_define_colormap(wks_trends_djf,"BlueDarkRed18")     
-     gsn_define_colormap(wks_trends_mam,"BlueDarkRed18")    
-     gsn_define_colormap(wks_trends_jja,"BlueDarkRed18")   
-     gsn_define_colormap(wks_trends_son,"BlueDarkRed18")   
-     gsn_define_colormap(wks_trends_ann,"BlueDarkRed18")   
-     gsn_define_colormap(wks_trends_mon,"BlueDarkRed18")   
-     gsn_define_colormap(wks_aa_djf,"ncl_default")   
-     gsn_define_colormap(wks_aa_mam,"ncl_default")  
-     gsn_define_colormap(wks_aa_jja,"ncl_default") 
-     gsn_define_colormap(wks_aa_son,"ncl_default") 
-     gsn_define_colormap(wks_aa_ann,"ncl_default") 
-     gsn_define_colormap(wks_aa_mon,"ncl_default") 
-     gsn_define_colormap(wks_rt_mon,"ncl_default") 
-  end if
   map_djf = new(nsim,"graphic")  
   map_mam = new(nsim,"graphic")  
   map_jja = new(nsim,"graphic")  
@@ -106,7 +77,6 @@ begin
   xy_son = new(nsim,"graphic")  
   xy_ann = new(nsim,"graphic")  
   xy_mon = new(nsim,"graphic")  
-  
   xy_rt_mon = new((/5,nsim/),"graphic")  
   
   if (isfilepresent2("obs_trefht")) then
@@ -244,7 +214,7 @@ begin
         do gg = 0,dimsizes(bc)-1
            modname = str_sub_str(modname,bc(gg),"_")
         end do
-        fn = getenv("OUTDIR")+modname+".cvdp_data.tas.trends_timeseries."+syear(ee)+"-"+eyear(ee)+".nc"
+        fn = OUTDIR+modname+".cvdp_data.tas.trends_timeseries."+syear(ee)+"-"+eyear(ee)+".nc"
         if (.not.isfilepresent2(fn)) then
            z = addfile(fn,"c")
            z@source = "NCAR Climate Analysis Section's Climate Variability Diagnostics Package v"+getenv("VERSION")
@@ -455,7 +425,6 @@ begin
   if (isfilepresent2("obs_trefht")) then
      delete([/xy_obs_mam,xy_obs_jja,xy_obs_son,xy_obs_ann,xy_obs_mon/])
   end if
-  OUTDIR = getenv("OUTDIR")
   if (wks_type.eq."png") then  
      do gg = 1,5
         if (isfilepresent2(OUTDIR+"tas.runtrend.mon.00000"+gg+".png")) then
