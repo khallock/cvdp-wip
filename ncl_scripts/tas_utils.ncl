@@ -11,7 +11,7 @@ begin
   end if
   f = addfile(fileName,"c")
   fileAtts               = True            ; assign file attributes
-  fileAtts@title         = "Intermediate file created for " + scriptName
+  fileAtts@title         = "Intermediate file created by " + scriptName
   fileAtts@Conventions   = "None"
   fileAtts@creation_date = systemfunc ("date")
 
@@ -24,7 +24,7 @@ end
 ;
 undef("create_contour_map_plot")
 function create_contour_map_plot(wks[1]:graphic,data[*][*]:numeric,name[1]:string,\
-         start_year,end_year)
+         syear,eyear)
 local res
 begin
      COLORMAP = toint(getenv("COLORMAP"))
@@ -77,7 +77,7 @@ begin
      res@gsnLeftStringFontHeightF = 0.014
      res@gsnCenterStringFontHeightF = 0.018
      res@gsnRightStringFontHeightF = 0.014
-     res@gsnLeftString = start_year+"-"+end_year
+     res@gsnLeftString = syear+"-"+eyear
 
      res@gsnRightString = data@units
      res@gsnCenterString = name
@@ -91,9 +91,10 @@ end
 ;
 undef("create_xy_plot")
 function create_xy_plot(wks[1]:graphic,data:numeric,data_obs:numeric,units[1]:string,\
-                        names[*]:string,syear,eyear,ee,nsim,plot_type)
-local nyr, nyr_max, xyres, xyres2, SCALE_TIMESERIES, tttt, plot_overlay
+                        names[*]:string,syear,eyear,ee,plot_type)
+local nsim, nyr, nyr_max, xyres, xyres2, SCALE_TIMESERIES, tttt, plot_overlay
 begin
+     nsim = dimsizes(syear)
      nyr = eyear-syear+1
      nyr_max = max(nyr)
 
@@ -197,9 +198,10 @@ end
 ; Create a panel plot for trends
 ;
 undef("create_trends_panel_plot")
-procedure create_trends_panel_plot(wks,plots,title,nsim)
-local panres, nrow, ncol
+procedure create_trends_panel_plot(wks,plots,title,nyr)
+local panres, nrow, ncol, nsim
 begin
+  nsim = dimsizes(nyr)
   panres = True
   panres@gsnMaximize = True  
   panres@gsnPaperOrientation = "portrait"
@@ -234,11 +236,12 @@ end
 ; Create a panel plot for global average
 ;
 undef("create_global_avg_panel_plot")
-procedure create_global_avg_panel_plot(wks,plots,title,nsim,nyr)
-local panres, nrow, ncol, nyr_max, tt, lp, SCALE_TIMESERIES
+procedure create_global_avg_panel_plot(wks,plots,title,nyr)
+local panres, nsim, nrow, ncol, nyr_max, tt, lp, SCALE_TIMESERIES
 begin
   SCALE_TIMESERIES = getenv("SCALE_TIMESERIES")
 
+  nsim = dimsizes(nyr)
   nyr_max = max(nyr)
 
   panres = True

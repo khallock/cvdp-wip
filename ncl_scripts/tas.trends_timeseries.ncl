@@ -276,16 +276,16 @@ begin
        ncdf_trends_ann->tas_trends_ann   = tas_trends_ann
        ncdf_trends_mon->tas_trends_mon   = tas_trends_mon
      end if
-     xy_djf(ee) = create_xy_plot(wks_aa_djf,tas_aa_seas(0,:),tas_aa_seas_obs(0,:),tas_trends_seas@units,names,syear,eyear,ee,nsim,"seas")
-     xy_mam(ee) = create_xy_plot(wks_aa_mam,tas_aa_seas(1,:),tas_aa_seas_obs(1,:),tas_trends_seas@units,names,syear,eyear,ee,nsim,"seas")
-     xy_jja(ee) = create_xy_plot(wks_aa_jja,tas_aa_seas(2,:),tas_aa_seas_obs(2,:),tas_trends_seas@units,names,syear,eyear,ee,nsim,"seas")
-     xy_son(ee) = create_xy_plot(wks_aa_son,tas_aa_seas(3,:),tas_aa_seas_obs(3,:),tas_trends_seas@units,names,syear,eyear,ee,nsim,"seas")
-     xy_ann(ee) = create_xy_plot(wks_aa_ann,tas_aa_ann,tas_aa_ann_obs,tas_trends_ann@units,names,syear,eyear,ee,nsim,"ann")
-     xy_mon(ee) = create_xy_plot(wks_aa_mon,tas_aa_mon,tas_aa_mon_obs,tas_trends_mon@units,names,syear,eyear,ee,nsim,"mon")
+     xy_djf(ee) = create_xy_plot(wks_aa_djf,tas_aa_seas(0,:),tas_aa_seas_obs(0,:),tas_trends_seas@units,names,syear,eyear,ee,"seas")
+     xy_mam(ee) = create_xy_plot(wks_aa_mam,tas_aa_seas(1,:),tas_aa_seas_obs(1,:),tas_trends_seas@units,names,syear,eyear,ee,"seas")
+     xy_jja(ee) = create_xy_plot(wks_aa_jja,tas_aa_seas(2,:),tas_aa_seas_obs(2,:),tas_trends_seas@units,names,syear,eyear,ee,"seas")
+     xy_son(ee) = create_xy_plot(wks_aa_son,tas_aa_seas(3,:),tas_aa_seas_obs(3,:),tas_trends_seas@units,names,syear,eyear,ee,"seas")
+     xy_ann(ee) = create_xy_plot(wks_aa_ann,tas_aa_ann,tas_aa_ann_obs,tas_trends_ann@units,names,syear,eyear,ee,"ann")
+     xy_mon(ee) = create_xy_plot(wks_aa_mon,tas_aa_mon,tas_aa_mon_obs,tas_trends_mon@units,names,syear,eyear,ee,"mon")
      
      do ff = 0,4
         if (.not.all(ismissing(tas_rt_mon(ff,:))))     
-           xy_rt_mon(ff,ee) = create_xy_plot(wks_rt_mon,tas_rt_mon(ff,:),tas_aa_mon,tas_rt_mon@units,names,syear,eyear,ee,nsim,"rt")
+           xy_rt_mon(ff,ee) = create_xy_plot(wks_rt_mon,tas_rt_mon(ff,:),tas_aa_mon,tas_rt_mon@units,names,syear,eyear,ee,"rt")
         end if
      end do   
          
@@ -309,44 +309,44 @@ begin
      delete([/tas_aa_seas_obs,tas_aa_mon_obs,tas_aa_ann_obs/])
   end if
   
-  create_trends_panel_plot(wks_trends_mam,map_djf,"TAS Trends (DJF)",nsim)
+  create_trends_panel_plot(wks_trends_mam,map_djf,"TAS Trends (DJF)",nyr)
   delete(wks_trends_djf)
   
-  create_trends_panel_plot(wks_trends_mam,map_mam,"TAS Trends (MAM)",nsim)
+  create_trends_panel_plot(wks_trends_mam,map_mam,"TAS Trends (MAM)",nyr)
   delete(wks_trends_mam)
   
-  create_trends_panel_plot(wks_trends_jja,map_jja,"TAS Trends (JJA)",nsim)
+  create_trends_panel_plot(wks_trends_jja,map_jja,"TAS Trends (JJA)",nyr)
   delete(wks_trends_jja)
 
-  create_trends_panel_plot(wks_trends_son,map_son,"TAS Trends (SON)",nsim)
+  create_trends_panel_plot(wks_trends_son,map_son,"TAS Trends (SON)",nyr)
   delete(wks_trends_son)
 
-  create_trends_panel_plot(wks_trends_ann,map_ann,"TAS Trends (Annual)",nsim)
+  create_trends_panel_plot(wks_trends_ann,map_ann,"TAS Trends (Annual)",nyr)
   delete(wks_trends_ann)
 
-  create_trends_panel_plot(wks_trends_mon,map_mon,"TAS Trends (Monthly)",nsim)
+  create_trends_panel_plot(wks_trends_mon,map_mon,"TAS Trends (Monthly)",nyr)
   delete(wks_trends_mon)
 
-  create_global_avg_panel_plot(wks_aa_djf,xy_djf,"TAS Global Average (DJF)",nsim,nyr)
+  create_global_avg_panel_plot(wks_aa_djf,xy_djf,"TAS Global Average (DJF)",nyr)
   delete(wks_aa_djf)
 
-  create_global_avg_panel_plot(wks_aa_mam,xy_mam,"TAS Global Average (MAM)",nsim,nyr)
+  create_global_avg_panel_plot(wks_aa_mam,xy_mam,"TAS Global Average (MAM)",nyr)
   delete(wks_aa_mam)
 
-  create_global_avg_panel_plot(wks_aa_jja,xy_jja,"TAS Global Average (JJA)",nsim,nyr)
+  create_global_avg_panel_plot(wks_aa_jja,xy_jja,"TAS Global Average (JJA)",nyr)
   delete(wks_aa_jja)
 
-  create_global_avg_panel_plot(wks_aa_son,xy_son,"TAS Global Average (SON)",nsim,nyr)
+  create_global_avg_panel_plot(wks_aa_son,xy_son,"TAS Global Average (SON)",nyr)
   delete(wks_aa_son)
 
-  create_global_avg_panel_plot(wks_aa_ann,xy_ann,"TAS Global Average (Annual)",nsim,nyr)
+  create_global_avg_panel_plot(wks_aa_ann,xy_ann,"TAS Global Average (Annual)",nyr)
   delete(wks_aa_ann)
 
-  create_global_avg_panel_plot(wks_aa_mon,xy_mon,"TAS Global Average (Monthly)",nsim,nyr)
+  create_global_avg_panel_plot(wks_aa_mon,xy_mon,"TAS Global Average (Monthly)",nyr)
   delete(wks_aa_mon)
 
   do ff = 0,dimsizes(rt_nyr)-1
-    create_global_avg_panel_plot(wks_rt_mon,xy_rt_mon(ff,:),"TAS Running " + rt_nyr(ff) + "yr Trend (Monthly)",nsim,nyr)
+    create_global_avg_panel_plot(wks_rt_mon,xy_rt_mon(ff,:),"TAS Running " + rt_nyr(ff) + "yr Trend (Monthly)",nyr)
   end do
   delete(wks_rt_mon)
   
