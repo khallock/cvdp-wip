@@ -306,139 +306,16 @@ begin
        ncdf_trends_ann->tas_trends_ann   = tas_trends_ann
        ncdf_trends_mon->tas_trends_mon   = tas_trends_mon
      end if
-     xyres = True
-     xyres@gsnDraw = False
-     xyres@gsnFrame = False
-     xyres@gsnYRefLine = 0.0
-     xyres@gsnYRefLineColor = "gray42"
+     xy_djf(ee) = create_xy_plot(wks_aa_djf,tas_aa_seas(0,:),tas_aa_seas_obs(0,:),tas_trends_seas@units,names,syear,eyear,ee,nsim,COLORMAP,"seas")
+     xy_mam(ee) = create_xy_plot(wks_aa_mam,tas_aa_seas(1,:),tas_aa_seas_obs(1,:),tas_trends_seas@units,names,syear,eyear,ee,nsim,COLORMAP,"seas")
+     xy_jja(ee) = create_xy_plot(wks_aa_jja,tas_aa_seas(2,:),tas_aa_seas_obs(2,:),tas_trends_seas@units,names,syear,eyear,ee,nsim,COLORMAP,"seas")
+     xy_son(ee) = create_xy_plot(wks_aa_son,tas_aa_seas(3,:),tas_aa_seas_obs(3,:),tas_trends_seas@units,names,syear,eyear,ee,nsim,COLORMAP,"seas")
+     xy_ann(ee) = create_xy_plot(wks_aa_ann,tas_aa_ann,tas_aa_ann_obs,tas_trends_ann@units,names,syear,eyear,ee,nsim,COLORMAP,"ann")
+     xy_mon(ee) = create_xy_plot(wks_aa_mon,tas_aa_mon,tas_aa_mon_obs,tas_trends_seas@units,names,syear,eyear,ee,nsim,COLORMAP,"mon")
      
-     if (wks_type.eq."png") then
-        xyres@xyLineThicknessF = 4.
-     else
-        xyres@xyLineThicknessF = 2.
-     end if
-     if (isfilepresent2("obs_trefht").and.ee.eq.0) then
-        xyres@xyLineColor = "black"
-     else
-        xyres@xyLineColor = "royalblue"
-     end if
-     xyres@tiYAxisString = ""
-     if (nsim.le.5) then
-        xyres@tmXBLabelFontHeightF = 0.0125
-        xyres@tmYLLabelFontHeightF = 0.0125
-        xyres@gsnLeftStringFontHeightF = 0.017     
-        xyres@gsnRightStringFontHeightF = 0.013     
-     else
-        xyres@tmXBLabelFontHeightF = 0.018
-        xyres@tmYLLabelFontHeightF = 0.018
-        xyres@gsnLeftStringFontHeightF = 0.024
-        xyres@gsnRightStringFontHeightF = 0.020     
-     end if
-     xyres@gsnLeftStringOrthogonalPosF = 0.025
-     xyres@gsnRightStringOrthogonalPosF = xyres@gsnLeftStringOrthogonalPosF
-     xyres@vpXF = 0.05
-     xyres@vpHeightF = 0.15
-     if (SCALE_TIMESERIES.eq."True") then
-        xyres@vpWidthF = 0.9*((nyr(ee)*1.)/nyr_max)
-     else
-        xyres@vpWidthF = 0.9
-     end if
-     xyres@gsnLeftString = ""     
-     xyres@gsnCenterString = ""
-     xyres@gsnRightString = ""
-     
-     xyres@trXMinF = syear(ee)-.5
-     xyres@trXMaxF = eyear(ee)+0.5
-     
-     xyres2 = xyres
-     xyres2@xyLineColor = "gray60"
-     xyres2@xyCurveDrawOrder = "PreDraw"
-     
-     xyres@gsnLeftString = names(ee)
-     tttt = dtrend_msg(ispan(0,dimsizes(tas_aa_seas&time)-1,1),tas_aa_seas(0,:),False,True)   
-     if (isfilepresent2("obs_trefht").and.ee.ge.1) then
-        xyres@trYMinF = min((/min(tas_aa_seas(0,:)),min(tas_aa_seas_obs(0,:))/))-.01
-        xyres@trYMaxF = max((/max(tas_aa_seas(0,:)),max(tas_aa_seas_obs(0,:))/))+.01
-     end if
-     xyres@gsnRightString = decimalPlaces(tttt@slope*nyr(ee),2,True)+tas_trends_seas@units
-     xy_djf(ee)     = gsn_csm_xy(wks_aa_djf,ispan(syear(ee),eyear(ee),1),tas_aa_seas(0,:),xyres)
-     if (isfilepresent2("obs_trefht").and.ee.ge.1) then
-        xy_obs_djf(ee) = gsn_csm_xy(wks_aa_djf,ispan(tas_aa_seas_obs@syear,tas_aa_seas_obs@eyear,1),tas_aa_seas_obs(0,:),xyres2)
-        overlay(xy_djf(ee),xy_obs_djf(ee))
-     end if
-     
-     tttt = dtrend_msg(ispan(0,dimsizes(tas_aa_seas&time)-1,1),tas_aa_seas(1,:),False,True)   
-     if (isfilepresent2("obs_trefht").and.ee.ge.1) then
-        xyres@trYMinF = min((/min(tas_aa_seas(1,:)),min(tas_aa_seas_obs(1,:))/))-.01
-        xyres@trYMaxF = max((/max(tas_aa_seas(1,:)),max(tas_aa_seas_obs(1,:))/))+.01
-     end if
-     xyres@gsnRightString = decimalPlaces(tttt@slope*nyr(ee),2,True)+tas_trends_seas@units
-     xy_mam(ee)     = gsn_csm_xy(wks_aa_mam,ispan(syear(ee),eyear(ee),1),tas_aa_seas(1,:),xyres)  
-     if (isfilepresent2("obs_trefht").and.ee.ge.1) then
-        xy_obs_mam(ee) = gsn_csm_xy(wks_aa_mam,ispan(tas_aa_seas_obs@syear,tas_aa_seas_obs@eyear,1),tas_aa_seas_obs(1,:),xyres2)
-        overlay(xy_mam(ee),xy_obs_mam(ee))
-     end if
-     
-     tttt = dtrend_msg(ispan(0,dimsizes(tas_aa_seas&time)-1,1),tas_aa_seas(2,:),False,True)   
-     if (isfilepresent2("obs_trefht").and.ee.ge.1) then
-        xyres@trYMinF = min((/min(tas_aa_seas(2,:)),min(tas_aa_seas_obs(2,:))/))-.01
-        xyres@trYMaxF = max((/max(tas_aa_seas(2,:)),max(tas_aa_seas_obs(2,:))/))+.01
-     end if
-     xyres@gsnRightString = decimalPlaces(tttt@slope*nyr(ee),2,True)+tas_trends_seas@units
-     xy_jja(ee)     = gsn_csm_xy(wks_aa_jja,ispan(syear(ee),eyear(ee),1),tas_aa_seas(2,:),xyres)  
-     if (isfilepresent2("obs_trefht").and.ee.ge.1) then
-        xy_obs_jja(ee) = gsn_csm_xy(wks_aa_jja,ispan(tas_aa_seas_obs@syear,tas_aa_seas_obs@eyear,1),tas_aa_seas_obs(2,:),xyres2)
-        overlay(xy_jja(ee),xy_obs_jja(ee))
-     end if
-     
-     tttt = dtrend_msg(ispan(0,dimsizes(tas_aa_seas&time)-1,1),tas_aa_seas(3,:),False,True)
-     if (isfilepresent2("obs_trefht").and.ee.ge.1) then
-        xyres@trYMinF = min((/min(tas_aa_seas(3,:)),min(tas_aa_seas_obs(3,:))/))-.01
-        xyres@trYMaxF = max((/max(tas_aa_seas(3,:)),max(tas_aa_seas_obs(3,:))/))+.01
-     end if   
-     xyres@gsnRightString = decimalPlaces(tttt@slope*nyr(ee),2,True)+tas_trends_seas@units
-     xy_son(ee)     = gsn_csm_xy(wks_aa_son,ispan(syear(ee),eyear(ee),1),tas_aa_seas(3,:),xyres)   
-     if (isfilepresent2("obs_trefht").and.ee.ge.1) then
-        xy_obs_son(ee) = gsn_csm_xy(wks_aa_son,ispan(tas_aa_seas_obs@syear,tas_aa_seas_obs@eyear,1),tas_aa_seas_obs(3,:),xyres2)
-        overlay(xy_son(ee),xy_obs_son(ee))
-     end if
-     delete(tttt)
-
-
-     tttt = dtrend_msg(ispan(0,dimsizes(tas_aa_ann&time)-1,1),tas_aa_ann,False,True)   
-     if (isfilepresent2("obs_trefht").and.ee.ge.1) then
-        xyres@trYMinF = min((/min(tas_aa_ann),min(tas_aa_ann_obs)/))-.01
-        xyres@trYMaxF = max((/max(tas_aa_ann),max(tas_aa_ann_obs)/))+.01
-     end if   
-     xyres@gsnRightString = decimalPlaces(tttt@slope*nyr(ee),2,True)+tas_trends_ann@units
-     xy_ann(ee)     = gsn_csm_xy(wks_aa_ann,ispan(syear(ee),eyear(ee),1),tas_aa_ann,xyres)   
-     if (isfilepresent2("obs_trefht").and.ee.ge.1) then
-        xy_obs_ann(ee) = gsn_csm_xy(wks_aa_ann,ispan(tas_aa_seas_obs@syear,tas_aa_seas_obs@eyear,1),tas_aa_ann_obs,xyres2)
-        overlay(xy_ann(ee),xy_obs_ann(ee))
-        delete(xyres@trYMinF)
-        delete(xyres@trYMaxF)
-     end if
-     delete(tttt)
-
-     xyres@trXMaxF = eyear(ee)+1.5
-     xyres2@trXMaxF = eyear(ee)+1.5     
-     tttt = dtrend_msg(ispan(0,dimsizes(tas_aa_mon&time)-1,1),tas_aa_mon,False,True)
-     if (isfilepresent2("obs_trefht").and.ee.ge.1) then
-        xyres@trYMinF = min((/min(tas_aa_mon),min(tas_aa_mon_obs)/))-.01
-        xyres@trYMaxF = max((/max(tas_aa_mon),max(tas_aa_mon_obs)/))+.01
-     end if   
-     xyres@gsnRightString = decimalPlaces(tttt@slope*dimsizes(tas_aa_mon&time),2,True)+tas_trends_mon@units
-     xy_mon(ee)     = gsn_csm_xy(wks_aa_mon,fspan(syear(ee),eyear(ee)+.91667,dimsizes(tas_aa_mon)),tas_aa_mon,xyres)  
-     if (isfilepresent2("obs_trefht").and.ee.ge.1) then
-        xy_obs_mon(ee) = gsn_csm_xy(wks_aa_mon,fspan(tas_aa_seas_obs@syear,tas_aa_seas_obs@eyear+.91667,dimsizes(tas_aa_mon_obs)),tas_aa_mon_obs,xyres2)
-        overlay(xy_mon(ee),xy_obs_mon(ee))
-     end if
-     
-     xyres@gsnRightString = ""     
      do ff = 0,4
         if (.not.all(ismissing(tas_rt_mon(ff,:))))     
-           xyres@gsnRightString =  tas_rt_mon@units    
-           xy_rt_mon(ff,ee)  = gsn_csm_xy(wks_rt_mon,fspan(syear(ee),eyear(ee)+.91667,dimsizes(tas_aa_mon&time)),tas_rt_mon(ff,:),xyres)
+           xy_rt_mon(ff,ee) = create_xy_plot(wks_rt_mon,tas_rt_mon(ff,:),tas_aa_mon,tas_rt_mon@units,names,syear,eyear,ee,nsim,COLORMAP,"rt")
         end if
      end do   
          
@@ -450,7 +327,7 @@ begin
        ncdf_rt_mon->tas_rt_mon   = tas_rt_mon
      end if
      delete([/tas_trends_seas,tas_trends_ann,tas_trends_mon/])  
-     delete([/tas_aa_seas,tas_aa_mon,tas_aa_ann,xyres,xyres2,tttt,tas_rt_mon/])
+     delete([/tas_aa_seas,tas_aa_mon,tas_aa_ann,tas_rt_mon/])
   end do
   if (isfilepresent2("obs_trefht")) then
 ;---Write intermediate obs data used for XY plots
@@ -576,7 +453,7 @@ begin
   delete([/xy_rt_mon/])
   delete(panres2)
   if (isfilepresent2("obs_trefht")) then
-     delete([/xy_obs_djf,xy_obs_mam,xy_obs_jja,xy_obs_son,xy_obs_ann,xy_obs_mon/])
+     delete([/xy_obs_mam,xy_obs_jja,xy_obs_son,xy_obs_ann,xy_obs_mon/])
   end if
   OUTDIR = getenv("OUTDIR")
   if (wks_type.eq."png") then  
