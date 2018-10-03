@@ -13,14 +13,11 @@ begin
   script_name = get_script_name()
   print("Starting: " + script_name)
   
-  SCALE_TIMESERIES = getenv("SCALE_TIMESERIES")  
+/;
   OUTPUT_DATA      = getenv("OUTPUT_DATA")  
-  PNG_SCALE        = tofloat(getenv("PNG_SCALE"))
   OPT_CLIMO        = getenv("OPT_CLIMO")
   CLIMO_SYEAR      = toint(getenv("CLIMO_SYEAR"))
   CLIMO_EYEAR      = toint(getenv("CLIMO_EYEAR"))
-  OUTPUT_TYPE      = getenv("OUTPUT_TYPE") 
-  COLORMAP         = toint(getenv("COLORMAP"))
   OUTPUT_PLOT_DATA = getenv("OUTPUT_PLOT_DATA")  
   OUTDIR           = getenv("OUTDIR")
 
@@ -46,49 +43,10 @@ begin
 
   pi=get_pi("float")
   rad=(pi/180.)
-         
-  wks_type = OUTPUT_TYPE
-  if (wks_type.eq."png") then
-     wks_type@wkWidth = 1500*PNG_SCALE
-     wks_type@wkHeight = 1500*PNG_SCALE
-  end if
-  wks_trends_djf = gsn_open_wks(wks_type,OUTDIR+"tas.trends.djf")
-  wks_trends_mam = gsn_open_wks(wks_type,OUTDIR+"tas.trends.mam")
-  wks_trends_jja = gsn_open_wks(wks_type,OUTDIR+"tas.trends.jja")
-  wks_trends_son = gsn_open_wks(wks_type,OUTDIR+"tas.trends.son")
-  wks_trends_ann = gsn_open_wks(wks_type,OUTDIR+"tas.trends.ann")
-  wks_trends_mon = gsn_open_wks(wks_type,OUTDIR+"tas.trends.mon")
-    
-  wks_aa_djf = gsn_open_wks(wks_type,OUTDIR+"tas.timeseries.djf")
-  wks_aa_mam = gsn_open_wks(wks_type,OUTDIR+"tas.timeseries.mam")
-  wks_aa_jja = gsn_open_wks(wks_type,OUTDIR+"tas.timeseries.jja")
-  wks_aa_son = gsn_open_wks(wks_type,OUTDIR+"tas.timeseries.son")
-  wks_aa_ann = gsn_open_wks(wks_type,OUTDIR+"tas.timeseries.ann")
-  wks_aa_mon = gsn_open_wks(wks_type,OUTDIR+"tas.timeseries.mon")
-  
-  wks_rt_mon = gsn_open_wks(wks_type,OUTDIR+"tas.runtrend.mon")
 
-  map_djf = new(nsim,"graphic")  
-  map_mam = new(nsim,"graphic")  
-  map_jja = new(nsim,"graphic")  
-  map_son = new(nsim,"graphic")  
-  map_ann = new(nsim,"graphic")  
-  map_mon = new(nsim,"graphic")  
-  xy_djf = new(nsim,"graphic")  
-  xy_mam = new(nsim,"graphic")  
-  xy_jja = new(nsim,"graphic")  
-  xy_son = new(nsim,"graphic")  
-  xy_ann = new(nsim,"graphic")  
-  xy_mon = new(nsim,"graphic")  
-  xy_rt_mon = new((/5,nsim/),"graphic")  
-  
-  if (isfilepresent2("obs_trefht")) then
-     xy_obs_djf = new(nsim,"graphic")  
-     xy_obs_mam = new(nsim,"graphic")  
-     xy_obs_jja = new(nsim,"graphic")  
-     xy_obs_son = new(nsim,"graphic")  
-     xy_obs_ann = new(nsim,"graphic")  
-     xy_obs_mon = new(nsim,"graphic")  
+  obs_file_present = isfilepresent2("obs_trefht")
+         
+  if (obs_file_present) then
      if (OUTPUT_PLOT_DATA.eq."True") then
        ncdf_aa_seas_obs = open_file_for_plot_data("tas.aa.seas.obs",script_name)
        ncdf_aa_ann_obs  = open_file_for_plot_data("tas.aa.ann.obs",script_name)
@@ -180,7 +138,7 @@ begin
      tas_trends_ann@units = tas_ann@units+" "+nyr(ee)+"yr~S~-1~N~"         
      delete([/tas_seas,tas_ann,coswgt/])
      
-     if (isfilepresent2("obs_trefht").and.ee.eq.0) then
+     if (obs_file_present.and.ee.eq.0) then
         tas_aa_seas@syear = syear(ee)
         tas_aa_seas@eyear = eyear(ee)
         tas_aa_mon@syear = syear(ee)
@@ -265,14 +223,6 @@ begin
         delete(z)
         delete([/tas_aa_seas2,tas_aa_ann2/])
      end if    
-;========================================================================
-     map_djf(ee) = create_contour_map_plot(wks_trends_djf,tas_trends_seas(0,:,:),names,syear,eyear,ee)
-     map_mam(ee) = create_contour_map_plot(wks_trends_mam,tas_trends_seas(1,:,:),names,syear,eyear,ee)
-     map_jja(ee) = create_contour_map_plot(wks_trends_jja,tas_trends_seas(2,:,:),names,syear,eyear,ee)
-     map_son(ee) = create_contour_map_plot(wks_trends_son,tas_trends_seas(3,:,:),names,syear,eyear,ee)
-     map_ann(ee) = create_contour_map_plot(wks_trends_ann,tas_trends_ann,names,syear,eyear,ee)
-     map_mon(ee) = create_contour_map_plot(wks_trends_mon,tas_trends_mon,names,syear,eyear,ee)
-
 ;---Write intermediate data used for contour plots
      if (OUTPUT_PLOT_DATA.eq."True") then
        ncdf_trends_seas->tas_trends_seas = tas_trends_seas
@@ -288,18 +238,6 @@ begin
        ncdf_trends_ann->names            = names
        ncdf_trends_mon->names            = names
      end if
-     xy_djf(ee) = create_xy_plot(wks_aa_djf,tas_aa_seas(0,:),tas_aa_seas_obs(0,:),tas_trends_seas@units,names,syear,eyear,ee,"seas")
-     xy_mam(ee) = create_xy_plot(wks_aa_mam,tas_aa_seas(1,:),tas_aa_seas_obs(1,:),tas_trends_seas@units,names,syear,eyear,ee,"seas")
-     xy_jja(ee) = create_xy_plot(wks_aa_jja,tas_aa_seas(2,:),tas_aa_seas_obs(2,:),tas_trends_seas@units,names,syear,eyear,ee,"seas")
-     xy_son(ee) = create_xy_plot(wks_aa_son,tas_aa_seas(3,:),tas_aa_seas_obs(3,:),tas_trends_seas@units,names,syear,eyear,ee,"seas")
-     xy_ann(ee) = create_xy_plot(wks_aa_ann,tas_aa_ann,tas_aa_ann_obs,tas_trends_ann@units,names,syear,eyear,ee,"ann")
-     xy_mon(ee) = create_xy_plot(wks_aa_mon,tas_aa_mon,tas_aa_mon_obs,tas_trends_mon@units,names,syear,eyear,ee,"mon")
-     
-     do ff = 0,4
-        if (.not.all(ismissing(tas_rt_mon(ff,:))))     
-           xy_rt_mon(ff,ee) = create_xy_plot(wks_rt_mon,tas_rt_mon(ff,:),tas_aa_mon,tas_rt_mon@units,names,syear,eyear,ee,"rt")
-        end if
-     end do   
          
 ;---Write intermediate data used for XY plots
      if (OUTPUT_PLOT_DATA.eq."True") then
@@ -323,7 +261,7 @@ begin
      delete([/tas_trends_seas,tas_trends_ann,tas_trends_mon/])  
      delete([/tas_aa_seas,tas_aa_mon,tas_aa_ann,tas_rt_mon/])
   end do
-  if (isfilepresent2("obs_trefht")) then
+  if (obs_file_present) then
 ;---Write intermediate obs data used for XY plots
      if (OUTPUT_PLOT_DATA.eq."True") then
        ncdf_aa_seas_obs->tas_aa_seas_obs = tas_aa_seas_obs
@@ -341,69 +279,8 @@ begin
      end if
      delete([/tas_aa_seas_obs,tas_aa_mon_obs,tas_aa_ann_obs/])
   end if
-  
-  create_trends_panel_plot(wks_trends_mam,map_djf,"TAS Trends (DJF)",nyr)
-  delete(wks_trends_djf)
-  
-  create_trends_panel_plot(wks_trends_mam,map_mam,"TAS Trends (MAM)",nyr)
-  delete(wks_trends_mam)
-  
-  create_trends_panel_plot(wks_trends_jja,map_jja,"TAS Trends (JJA)",nyr)
-  delete(wks_trends_jja)
+;/
+  plot_tas_trends_timeseries()
 
-  create_trends_panel_plot(wks_trends_son,map_son,"TAS Trends (SON)",nyr)
-  delete(wks_trends_son)
-
-  create_trends_panel_plot(wks_trends_ann,map_ann,"TAS Trends (Annual)",nyr)
-  delete(wks_trends_ann)
-
-  create_trends_panel_plot(wks_trends_mon,map_mon,"TAS Trends (Monthly)",nyr)
-  delete(wks_trends_mon)
-
-  create_global_avg_panel_plot(wks_aa_djf,xy_djf,"TAS Global Average (DJF)",nyr)
-  delete(wks_aa_djf)
-
-  create_global_avg_panel_plot(wks_aa_mam,xy_mam,"TAS Global Average (MAM)",nyr)
-  delete(wks_aa_mam)
-
-  create_global_avg_panel_plot(wks_aa_jja,xy_jja,"TAS Global Average (JJA)",nyr)
-  delete(wks_aa_jja)
-
-  create_global_avg_panel_plot(wks_aa_son,xy_son,"TAS Global Average (SON)",nyr)
-  delete(wks_aa_son)
-
-  create_global_avg_panel_plot(wks_aa_ann,xy_ann,"TAS Global Average (Annual)",nyr)
-  delete(wks_aa_ann)
-
-  create_global_avg_panel_plot(wks_aa_mon,xy_mon,"TAS Global Average (Monthly)",nyr)
-  delete(wks_aa_mon)
-
-  do ff = 0,dimsizes(rt_nyr)-1
-    create_global_avg_panel_plot(wks_rt_mon,xy_rt_mon(ff,:),"TAS Running " + rt_nyr(ff) + "yr Trend (Monthly)",nyr)
-  end do
-  delete(wks_rt_mon)
-  
-  delete([/map_djf,map_mam,map_jja,map_son,map_ann,map_mon,xy_djf,xy_mam,xy_jja,xy_son,xy_ann,xy_mon,xy_rt_mon/])
-  if (isfilepresent2("obs_trefht")) then
-     delete([/xy_obs_mam,xy_obs_jja,xy_obs_son,xy_obs_ann,xy_obs_mon/])
-  end if
-  if (wks_type.eq."png") then  
-     do gg = 1,5
-        if (isfilepresent2(OUTDIR+"tas.runtrend.mon.00000"+gg+".png")) then
-           system("mv "+OUTDIR+"tas.runtrend.mon.00000"+gg+".png "+OUTDIR+"tas."+rt_nyr(gg-1)+"yr_runtrend.mon.png")
-        end if
-     end do
-  else
-     if (isfilepresent2(OUTDIR+"tas.runtrend.mon.ps")) then
-        system("psplit "+OUTDIR+"tas.runtrend.mon.ps "+OUTDIR+"tas_rt")
-        do gg = 1,5
-           if (isfilepresent2(OUTDIR+"tas_rt000"+gg+".ps")) then
-              system("mv "+OUTDIR+"tas_rt000"+gg+".ps "+OUTDIR+"tas."+rt_nyr(gg-1)+"yr_runtrend.mon.ps")
-           end if
-        end do
-        system("rm "+OUTDIR+"tas.runtrend.mon.ps")
-     end if
-  end if
-  delete(OUTDIR)
   print("Finished: " + script_name)
 end

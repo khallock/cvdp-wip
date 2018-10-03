@@ -93,11 +93,13 @@ end
 undef("create_xy_plot")
 function create_xy_plot(wks[1]:graphic,data:numeric,data_obs:numeric,units[1]:string,\
                         names[*]:string,syear[*],eyear[*],ee[1]:integer,plot_type)
-local nsim, nyr, nyr_max, xyres, xyres2, SCALE_TIMESERIES, tttt, plot_overlay
+local nsim, nyr, nyr_max, xyres, xyres2, SCALE_TIMESERIES, tttt, plot_overlay,
+      obs_file_present
 begin
      nsim = dimsizes(syear)
      nyr = eyear-syear+1
      nyr_max = max(nyr)
+     obs_file_present = isfilepresent2("obs_trefht")
 
      SCALE_TIMESERIES = getenv("SCALE_TIMESERIES")
 
@@ -112,7 +114,7 @@ begin
      else
         xyres@xyLineThicknessF = 2.
      end if
-     if (isfilepresent2("obs_trefht").and.ee.eq.0) then
+     if (obs_file_present.and.ee.eq.0) then
         xyres@xyLineColor = "black"
      else
         xyres@xyLineColor = "royalblue"
@@ -162,7 +164,7 @@ begin
        xyres@gsnRightString = decimalPlaces(tttt@slope*nyr(ee),2,True)+units
      end if
      end if
-     if (isfilepresent2("obs_trefht").and.ee.ge.1) then
+     if (obs_file_present.and.ee.ge.1) then
         xyres@trYMinF = min((/min(data),min(data_obs)/))-.01
         xyres@trYMaxF = max((/max(data),max(data_obs)/))+.01
      end if
@@ -181,7 +183,7 @@ begin
      if(plot_type.eq."rt")
         return(plot_base)
      end if
-     if (isfilepresent2("obs_trefht").and.ee.ge.1) then
+     if (obs_file_present.and.ee.ge.1) then
         overlay_string = "plot_overlay_"+plot_type+"_"+ee
         if(plot_type.eq."mon") then
           plot_tmp = gsn_csm_xy(wks,fspan(data_obs@syear,data_obs@eyear+.91667,dimsizes(data_obs)),data_obs,xyres2)
@@ -265,4 +267,184 @@ begin
   end if
   panres@gsnPanelMainString = title
   gsn_panel2(wks,plots,lp,panres)  
+end
+
+;=================================================================================================
+; Plots data from tas.trends_timeseries.ncl
+;
+undef("plot_tas_trends_timeseries")
+procedure plot_tas_trends_timeseries()
+local f, syear, eyear, names, f, nsim, nyr, nyr_max, obs_file_present
+begin
+  PNG_SCALE        = tofloat(getenv("PNG_SCALE"))
+  OUTPUT_TYPE      = getenv("OUTPUT_TYPE") 
+  COLORMAP         = toint(getenv("COLORMAP"))
+  OUTDIR           = getenv("OUTDIR")
+  obs_file_present = isfilepresent2("obs_trefht")
+
+;---Open one of the NetCDF files to get the years
+  f = addfile(OUTDIR+"tas.trends.seas.ee0.nc","r")
+  syear = f->syear
+  eyear = f->eyear
+  names = f->names
+  delete(f)
+
+  nsim = dimsizes(syear)
+  nyr = eyear-syear+1
+  nyr_max = max(nyr)
+
+  pi=get_pi("float")
+  rad=(pi/180.)
+         
+  wks_type = OUTPUT_TYPE
+  if (wks_type.eq."png") then
+     wks_type@wkWidth = 1500*PNG_SCALE
+     wks_type@wkHeight = 1500*PNG_SCALE
+  end if
+  wks_trends_djf = gsn_open_wks(wks_type,OUTDIR+"tas.trends.djf")
+  wks_trends_mam = gsn_open_wks(wks_type,OUTDIR+"tas.trends.mam")
+  wks_trends_jja = gsn_open_wks(wks_type,OUTDIR+"tas.trends.jja")
+  wks_trends_son = gsn_open_wks(wks_type,OUTDIR+"tas.trends.son")
+  wks_trends_ann = gsn_open_wks(wks_type,OUTDIR+"tas.trends.ann")
+  wks_trends_mon = gsn_open_wks(wks_type,OUTDIR+"tas.trends.mon")
+    
+  wks_aa_djf = gsn_open_wks(wks_type,OUTDIR+"tas.timeseries.djf")
+  wks_aa_mam = gsn_open_wks(wks_type,OUTDIR+"tas.timeseries.mam")
+  wks_aa_jja = gsn_open_wks(wks_type,OUTDIR+"tas.timeseries.jja")
+  wks_aa_son = gsn_open_wks(wks_type,OUTDIR+"tas.timeseries.son")
+  wks_aa_ann = gsn_open_wks(wks_type,OUTDIR+"tas.timeseries.ann")
+  wks_aa_mon = gsn_open_wks(wks_type,OUTDIR+"tas.timeseries.mon")
+  
+  wks_rt_mon = gsn_open_wks(wks_type,OUTDIR+"tas.runtrend.mon")
+
+  map_djf = new(nsim,"graphic")  
+  map_mam = new(nsim,"graphic")  
+  map_jja = new(nsim,"graphic")  
+  map_son = new(nsim,"graphic")  
+  map_ann = new(nsim,"graphic")  
+  map_mon = new(nsim,"graphic")  
+  xy_djf = new(nsim,"graphic")  
+  xy_mam = new(nsim,"graphic")  
+  xy_jja = new(nsim,"graphic")  
+  xy_son = new(nsim,"graphic")  
+  xy_ann = new(nsim,"graphic")  
+  xy_mon = new(nsim,"graphic")  
+  xy_rt_mon = new((/5,nsim/),"graphic")  
+  
+  if (obs_file_present) then
+     xy_obs_djf = new(nsim,"graphic")  
+     xy_obs_mam = new(nsim,"graphic")  
+     xy_obs_jja = new(nsim,"graphic")  
+     xy_obs_son = new(nsim,"graphic")  
+     xy_obs_ann = new(nsim,"graphic")  
+     xy_obs_mon = new(nsim,"graphic")  
+     ncdf_aa_seas_obs = addfile(OUTDIR+"tas.aa.seas.obs.nc","r")
+     ncdf_aa_ann_obs  = addfile(OUTDIR+"tas.aa.ann.obs.nc","r")
+     ncdf_aa_mon_obs  = addfile(OUTDIR+"tas.aa.mon.obs.nc","r")
+
+     tas_aa_seas_obs = ncdf_aa_seas_obs->tas_aa_seas_obs
+     tas_aa_ann_obs = ncdf_aa_ann_obs->tas_aa_ann_obs
+     tas_aa_mon_obs = ncdf_aa_mon_obs->tas_aa_mon_obs
+  end if
+
+  do ee = 0,nsim-1
+     ncdf_trends_seas = addfile(OUTDIR+"tas.trends.seas.ee"+ee+".nc","r")
+     ncdf_trends_ann  = addfile(OUTDIR+"tas.trends.ann.ee"+ee+".nc","r")
+     ncdf_trends_mon  = addfile(OUTDIR+"tas.trends.mon.ee"+ee+".nc","r")
+     ncdf_aa_seas     = addfile(OUTDIR+"tas.aa.seas.ee"+ee+".nc","r")
+     ncdf_aa_ann      = addfile(OUTDIR+"tas.aa.ann.ee"+ee+".nc","r")
+     ncdf_aa_mon      = addfile(OUTDIR+"tas.aa.mon.ee"+ee+".nc","r")
+     ncdf_rt_mon      = addfile(OUTDIR+"tas.rt.mon.ee"+ee+".nc","r")
+
+     tas_trends_seas := ncdf_trends_seas->tas_trends_seas
+     tas_trends_ann := ncdf_trends_ann->tas_trends_ann
+     tas_trends_mon := ncdf_trends_mon->tas_trends_mon
+     tas_aa_seas := ncdf_aa_seas->tas_aa_seas
+     tas_aa_ann := ncdf_aa_ann->tas_aa_ann
+     tas_aa_mon := ncdf_aa_mon->tas_aa_mon
+     tas_rt_mon := ncdf_rt_mon->tas_rt_mon
+
+     map_djf(ee) = create_contour_map_plot(wks_trends_djf,tas_trends_seas(0,:,:),names,syear,eyear,ee)
+     map_mam(ee) = create_contour_map_plot(wks_trends_mam,tas_trends_seas(1,:,:),names,syear,eyear,ee)
+     map_jja(ee) = create_contour_map_plot(wks_trends_jja,tas_trends_seas(2,:,:),names,syear,eyear,ee)
+     map_son(ee) = create_contour_map_plot(wks_trends_son,tas_trends_seas(3,:,:),names,syear,eyear,ee)
+     map_ann(ee) = create_contour_map_plot(wks_trends_ann,tas_trends_ann,names,syear,eyear,ee)
+     map_mon(ee) = create_contour_map_plot(wks_trends_mon,tas_trends_mon,names,syear,eyear,ee)
+
+     xy_djf(ee) = create_xy_plot(wks_aa_djf,tas_aa_seas(0,:),tas_aa_seas_obs(0,:),tas_trends_seas@units,names,syear,eyear,ee,"seas")
+     xy_mam(ee) = create_xy_plot(wks_aa_mam,tas_aa_seas(1,:),tas_aa_seas_obs(1,:),tas_trends_seas@units,names,syear,eyear,ee,"seas")
+     xy_jja(ee) = create_xy_plot(wks_aa_jja,tas_aa_seas(2,:),tas_aa_seas_obs(2,:),tas_trends_seas@units,names,syear,eyear,ee,"seas")
+     xy_son(ee) = create_xy_plot(wks_aa_son,tas_aa_seas(3,:),tas_aa_seas_obs(3,:),tas_trends_seas@units,names,syear,eyear,ee,"seas")
+     xy_ann(ee) = create_xy_plot(wks_aa_ann,tas_aa_ann,tas_aa_ann_obs,tas_trends_ann@units,names,syear,eyear,ee,"ann")
+     xy_mon(ee) = create_xy_plot(wks_aa_mon,tas_aa_mon,tas_aa_mon_obs,tas_trends_mon@units,names,syear,eyear,ee,"mon")
+     
+     do ff = 0,4
+        if (.not.all(ismissing(tas_rt_mon(ff,:))))     
+           xy_rt_mon(ff,ee) = create_xy_plot(wks_rt_mon,tas_rt_mon(ff,:),tas_aa_mon,tas_rt_mon@units,names,syear,eyear,ee,"rt")
+        end if
+     end do   
+  end do
+  
+  create_trends_panel_plot(wks_trends_djf,map_djf,"TAS Trends (DJF)",nyr)
+  delete(wks_trends_djf)
+  
+  create_trends_panel_plot(wks_trends_mam,map_mam,"TAS Trends (MAM)",nyr)
+  delete(wks_trends_mam)
+  
+  create_trends_panel_plot(wks_trends_jja,map_jja,"TAS Trends (JJA)",nyr)
+  delete(wks_trends_jja)
+
+  create_trends_panel_plot(wks_trends_son,map_son,"TAS Trends (SON)",nyr)
+  delete(wks_trends_son)
+
+  create_trends_panel_plot(wks_trends_ann,map_ann,"TAS Trends (Annual)",nyr)
+  delete(wks_trends_ann)
+
+  create_trends_panel_plot(wks_trends_mon,map_mon,"TAS Trends (Monthly)",nyr)
+  delete(wks_trends_mon)
+
+  create_global_avg_panel_plot(wks_aa_djf,xy_djf,"TAS Global Average (DJF)",nyr)
+  delete(wks_aa_djf)
+
+  create_global_avg_panel_plot(wks_aa_mam,xy_mam,"TAS Global Average (MAM)",nyr)
+  delete(wks_aa_mam)
+
+  create_global_avg_panel_plot(wks_aa_jja,xy_jja,"TAS Global Average (JJA)",nyr)
+  delete(wks_aa_jja)
+
+  create_global_avg_panel_plot(wks_aa_son,xy_son,"TAS Global Average (SON)",nyr)
+  delete(wks_aa_son)
+
+  create_global_avg_panel_plot(wks_aa_ann,xy_ann,"TAS Global Average (Annual)",nyr)
+  delete(wks_aa_ann)
+
+  create_global_avg_panel_plot(wks_aa_mon,xy_mon,"TAS Global Average (Monthly)",nyr)
+  delete(wks_aa_mon)
+
+  do ff = 0,dimsizes(tas_rt_mon&rt_year)-1
+    create_global_avg_panel_plot(wks_rt_mon,xy_rt_mon(ff,:),"TAS Running " + tas_rt_mon&rt_year(ff) + "yr Trend (Monthly)",nyr)
+  end do
+  delete(wks_rt_mon)
+  
+  delete([/map_djf,map_mam,map_jja,map_son,map_ann,map_mon,xy_djf,xy_mam,xy_jja,xy_son,xy_ann,xy_mon,xy_rt_mon/])
+  if (obs_file_present) then
+     delete([/xy_obs_mam,xy_obs_jja,xy_obs_son,xy_obs_ann,xy_obs_mon/])
+  end if
+  if (wks_type.eq."png") then  
+     do gg = 1,5
+        if (isfilepresent2(OUTDIR+"tas.runtrend.mon.00000"+gg+".png")) then
+           system("mv "+OUTDIR+"tas.runtrend.mon.00000"+gg+".png "+OUTDIR+"tas."+tas_rt_mon&rt_year(gg-1)+"yr_runtrend.mon.png")
+        end if
+     end do
+  else
+     if (isfilepresent2(OUTDIR+"tas.runtrend.mon.ps")) then
+        system("psplit "+OUTDIR+"tas.runtrend.mon.ps "+OUTDIR+"tas_rt")
+        do gg = 1,5
+           if (isfilepresent2(OUTDIR+"tas_rt000"+gg+".ps")) then
+              system("mv "+OUTDIR+"tas_rt000"+gg+".ps "+OUTDIR+"tas."+tas_rt_mon&rt_year(gg-1)+"yr_runtrend.mon.ps")
+           end if
+        end do
+        system("rm "+OUTDIR+"tas.runtrend.mon.ps")
+     end if
+  end if
 end
