@@ -5,6 +5,7 @@ undef("open_file_for_plot_data")
 function open_file_for_plot_data(prefixName,scriptName)
 local fileAtts
 begin
+  setfileoption("nc","Format","NetCDF4")       ; Use NetCDF4 so we can write strings
   fileName = getenv("OUTDIR") + prefixName + ".nc"
   if(fileexists(fileName))
     system("rm -f " + fileName)

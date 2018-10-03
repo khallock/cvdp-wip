@@ -38,10 +38,13 @@ begin
      syear(gg) = stringtointeger(str_strip(str_get_field(na(gg),3,delim)))
      eyear(gg) = stringtointeger(str_strip(str_get_field(na(gg),4,delim)))
   end do
+  syear!0 = "year"
+  eyear!0 = "year"
+  names!0 = "year"
   nyr = eyear-syear+1
   nyr_max = max(nyr)
 
-  pi=4.*atan(1.0)
+  pi=get_pi("float")
   rad=(pi/180.)
          
   wks_type = OUTPUT_TYPE
@@ -295,6 +298,18 @@ begin
        ncdf_aa_ann->tas_aa_ann   = tas_aa_ann
        ncdf_aa_mon->tas_aa_mon   = tas_aa_mon
        ncdf_rt_mon->tas_rt_mon   = tas_rt_mon
+       ncdf_aa_seas->syear       = syear
+       ncdf_aa_ann->syear        = syear
+       ncdf_aa_mon->syear        = syear
+       ncdf_rt_mon->syear        = syear
+       ncdf_aa_seas->eyear       = eyear
+       ncdf_aa_ann->eyear        = eyear
+       ncdf_aa_mon->eyear        = eyear
+       ncdf_rt_mon->eyear        = eyear
+       ncdf_aa_seas->names       = names
+       ncdf_aa_ann->names        = names
+       ncdf_aa_mon->names        = names
+       ncdf_rt_mon->names        = names
      end if
      delete([/tas_trends_seas,tas_trends_ann,tas_trends_mon/])  
      delete([/tas_aa_seas,tas_aa_mon,tas_aa_ann,tas_rt_mon/])
@@ -305,6 +320,15 @@ begin
        ncdf_aa_seas_obs->tas_aa_seas_obs = tas_aa_seas_obs
        ncdf_aa_ann_obs->tas_aa_ann_obs   = tas_aa_ann_obs
        ncdf_aa_mon_obs->tas_aa_mon_obs   = tas_aa_mon_obs
+       ncdf_aa_seas_obs->syear           = syear
+       ncdf_aa_ann_obs->syear            = syear
+       ncdf_aa_mon_obs->syear            = syear
+       ncdf_aa_seas_obs->eyear           = eyear
+       ncdf_aa_ann_obs->eyear            = eyear
+       ncdf_aa_mon_obs->eyear            = eyear
+       ncdf_aa_seas_obs->names           = names
+       ncdf_aa_ann_obs->names            = names
+       ncdf_aa_mon_obs->names            = names
      end if
      delete([/tas_aa_seas_obs,tas_aa_mon_obs,tas_aa_ann_obs/])
   end if
