@@ -1177,3 +1177,16 @@ begin
   return(zarr)
 end
 
+;=================================================================================================
+; Checks an environment variable, and if set to "True", return the logical True. This 
+; is to avoid checking against "True", since strings are expensive in NCL.
+;
+undef("getenv_logical")
+function getenv_logical(env_var_name[1]:string)
+begin
+  if(getenv(env_var_name).eq."True") then
+    return(True)
+  else
+    return(False)
+  end if
+end
