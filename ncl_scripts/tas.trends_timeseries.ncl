@@ -345,11 +345,9 @@ begin
   create_global_avg_panel_plot(wks_aa_mon,xy_mon,"TAS Global Average (Monthly)",nsim,nyr)
   delete(wks_aa_mon)
 
-  create_global_avg_panel_plot(wks_rt_mon,xy_rt_mon(0,:),"TAS Running 8yr Trend (Monthly)",nsim,nyr)
-  create_global_avg_panel_plot(wks_rt_mon,xy_rt_mon(1,:),"TAS Running 10yr Trend (Monthly)",nsim,nyr)
-  create_global_avg_panel_plot(wks_rt_mon,xy_rt_mon(2,:),"TAS Running 12yr Trend (Monthly)",nsim,nyr)
-  create_global_avg_panel_plot(wks_rt_mon,xy_rt_mon(3,:),"TAS Running 14yr Trend (Monthly)",nsim,nyr)
-  create_global_avg_panel_plot(wks_rt_mon,xy_rt_mon(4,:),"TAS Running 16yr Trend (Monthly)",nsim,nyr)
+  do gg = 0,4
+    create_global_avg_panel_plot(wks_rt_mon,xy_rt_mon(gg,:),"TAS Running " + nyr(gg) + "yr Trend (Monthly)",nsim,nyr)
+  end do
   delete(wks_rt_mon)
   
   delete([/map_djf,map_mam,map_jja,map_son,map_ann,map_mon,xy_djf,xy_mam,xy_jja,xy_son,xy_ann,xy_mon,xy_rt_mon/])
