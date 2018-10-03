@@ -24,9 +24,11 @@ end
 ;
 undef("create_contour_map_plot")
 function create_contour_map_plot(wks[1]:graphic,data[*][*]:numeric,name[1]:string,\
-         start_year,end_year,colormap_type)
+         start_year,end_year)
 local res
 begin
+     COLORMAP = getenv("COLORMAP")  
+
      res = True
      res@mpProjection = "WinkelTripel"
      res@mpGeophysicalLineColor = "gray42"
@@ -47,10 +49,10 @@ begin
      res@gsnFrame     = False
 
      res@cnLevelSelectionMode = "ExplicitLevels"
-     if (colormap_type.eq.0) then
+     if (COLORMAP.eq.0) then
         res@cnLevels = (/-8,-6,-5,-4,-3,-2,-1,-0.5,-0.25,0,0.25,0.5,1,2,3,4,5,6,8/)
      end if
-     if (colormap_type.eq.1) then
+     if (COLORMAP.eq.1) then
         res@cnLevels = (/-6,-4,-3,-2,-1,-0.5,-0.25,0,0.25,0.5,1,2,3,4,6/)
      end if
 
@@ -82,7 +84,7 @@ end
 ;
 undef("create_xy_plot")
 function create_xy_plot(wks[1]:graphic,data:numeric,data_obs:numeric,units[1]:string,\
-                        names[*]:string,syear,eyear,ee,nsim,colormap_type,plot_type)
+                        names[*]:string,syear,eyear,ee,nsim,plot_type)
 local nyr, nyr_max, xyres, xyres2, SCALE_TIMESERIES, tttt, plot_overlay
 begin
      nyr = eyear-syear+1

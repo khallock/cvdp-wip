@@ -293,12 +293,12 @@ begin
         delete([/tas_aa_seas2,tas_aa_ann2/])
      end if    
 ;========================================================================
-     map_djf(ee) = create_contour_map_plot(wks_trends_djf,tas_trends_seas(0,:,:),names(ee),syear(ee),eyear(ee),COLORMAP)
-     map_mam(ee) = create_contour_map_plot(wks_trends_mam,tas_trends_seas(1,:,:),names(ee),syear(ee),eyear(ee),COLORMAP)
-     map_jja(ee) = create_contour_map_plot(wks_trends_jja,tas_trends_seas(2,:,:),names(ee),syear(ee),eyear(ee),COLORMAP)
-     map_son(ee) = create_contour_map_plot(wks_trends_son,tas_trends_seas(3,:,:),names(ee),syear(ee),eyear(ee),COLORMAP)
-     map_ann(ee) = create_contour_map_plot(wks_trends_ann,tas_trends_ann,names(ee),syear(ee),eyear(ee),COLORMAP)
-     map_mon(ee) = create_contour_map_plot(wks_trends_mon,tas_trends_mon,names(ee),syear(ee),eyear(ee),COLORMAP)
+     map_djf(ee) = create_contour_map_plot(wks_trends_djf,tas_trends_seas(0,:,:),names(ee),syear(ee),eyear(ee))
+     map_mam(ee) = create_contour_map_plot(wks_trends_mam,tas_trends_seas(1,:,:),names(ee),syear(ee),eyear(ee))
+     map_jja(ee) = create_contour_map_plot(wks_trends_jja,tas_trends_seas(2,:,:),names(ee),syear(ee),eyear(ee))
+     map_son(ee) = create_contour_map_plot(wks_trends_son,tas_trends_seas(3,:,:),names(ee),syear(ee),eyear(ee))
+     map_ann(ee) = create_contour_map_plot(wks_trends_ann,tas_trends_ann,names(ee),syear(ee),eyear(ee))
+     map_mon(ee) = create_contour_map_plot(wks_trends_mon,tas_trends_mon,names(ee),syear(ee),eyear(ee))
 
 ;---Write intermediate data used for contour plots
      if (OUTPUT_PLOT_DATA.eq."True") then
@@ -306,16 +306,16 @@ begin
        ncdf_trends_ann->tas_trends_ann   = tas_trends_ann
        ncdf_trends_mon->tas_trends_mon   = tas_trends_mon
      end if
-     xy_djf(ee) = create_xy_plot(wks_aa_djf,tas_aa_seas(0,:),tas_aa_seas_obs(0,:),tas_trends_seas@units,names,syear,eyear,ee,nsim,COLORMAP,"seas")
-     xy_mam(ee) = create_xy_plot(wks_aa_mam,tas_aa_seas(1,:),tas_aa_seas_obs(1,:),tas_trends_seas@units,names,syear,eyear,ee,nsim,COLORMAP,"seas")
-     xy_jja(ee) = create_xy_plot(wks_aa_jja,tas_aa_seas(2,:),tas_aa_seas_obs(2,:),tas_trends_seas@units,names,syear,eyear,ee,nsim,COLORMAP,"seas")
-     xy_son(ee) = create_xy_plot(wks_aa_son,tas_aa_seas(3,:),tas_aa_seas_obs(3,:),tas_trends_seas@units,names,syear,eyear,ee,nsim,COLORMAP,"seas")
-     xy_ann(ee) = create_xy_plot(wks_aa_ann,tas_aa_ann,tas_aa_ann_obs,tas_trends_ann@units,names,syear,eyear,ee,nsim,COLORMAP,"ann")
-     xy_mon(ee) = create_xy_plot(wks_aa_mon,tas_aa_mon,tas_aa_mon_obs,tas_trends_mon@units,names,syear,eyear,ee,nsim,COLORMAP,"mon")
+     xy_djf(ee) = create_xy_plot(wks_aa_djf,tas_aa_seas(0,:),tas_aa_seas_obs(0,:),tas_trends_seas@units,names,syear,eyear,ee,nsim,"seas")
+     xy_mam(ee) = create_xy_plot(wks_aa_mam,tas_aa_seas(1,:),tas_aa_seas_obs(1,:),tas_trends_seas@units,names,syear,eyear,ee,nsim,"seas")
+     xy_jja(ee) = create_xy_plot(wks_aa_jja,tas_aa_seas(2,:),tas_aa_seas_obs(2,:),tas_trends_seas@units,names,syear,eyear,ee,nsim,"seas")
+     xy_son(ee) = create_xy_plot(wks_aa_son,tas_aa_seas(3,:),tas_aa_seas_obs(3,:),tas_trends_seas@units,names,syear,eyear,ee,nsim,"seas")
+     xy_ann(ee) = create_xy_plot(wks_aa_ann,tas_aa_ann,tas_aa_ann_obs,tas_trends_ann@units,names,syear,eyear,ee,nsim,"ann")
+     xy_mon(ee) = create_xy_plot(wks_aa_mon,tas_aa_mon,tas_aa_mon_obs,tas_trends_mon@units,names,syear,eyear,ee,nsim,"mon")
      
      do ff = 0,4
         if (.not.all(ismissing(tas_rt_mon(ff,:))))     
-           xy_rt_mon(ff,ee) = create_xy_plot(wks_rt_mon,tas_rt_mon(ff,:),tas_aa_mon,tas_rt_mon@units,names,syear,eyear,ee,nsim,COLORMAP,"rt")
+           xy_rt_mon(ff,ee) = create_xy_plot(wks_rt_mon,tas_rt_mon(ff,:),tas_aa_mon,tas_rt_mon@units,names,syear,eyear,ee,nsim,"rt")
         end if
      end do   
          
