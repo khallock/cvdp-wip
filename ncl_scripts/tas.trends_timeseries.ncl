@@ -13,13 +13,12 @@ begin
   script_name = get_script_name()
   print("Starting: " + script_name)
   
-/;
-  OUTPUT_DATA      = getenv("OUTPUT_DATA")  
+  OUTDIR           = getenv("OUTDIR")
+  OUTPUT_DATA      = getenv_logical("OUTPUT_DATA")  
+  OUTPUT_PLOT_DATA = getenv_logical("OUTPUT_PLOT_DATA")
   OPT_CLIMO        = getenv("OPT_CLIMO")
   CLIMO_SYEAR      = toint(getenv("CLIMO_SYEAR"))
   CLIMO_EYEAR      = toint(getenv("CLIMO_EYEAR"))
-  OUTPUT_PLOT_DATA = getenv("OUTPUT_PLOT_DATA")  
-  OUTDIR           = getenv("OUTDIR")
 
   nsim = numAsciiRow("namelist_byvar/namelist_trefht")
   na = asciiread("namelist_byvar/namelist_trefht",(/nsim/),"string")
@@ -46,15 +45,13 @@ begin
 
   obs_file_present = isfilepresent2("obs_trefht")
          
-  if (obs_file_present) then
-     if (OUTPUT_PLOT_DATA.eq."True") then
-       ncdf_aa_seas_obs = open_file_for_plot_data("tas.aa.seas.obs",script_name)
-       ncdf_aa_ann_obs  = open_file_for_plot_data("tas.aa.ann.obs",script_name)
-       ncdf_aa_mon_obs  = open_file_for_plot_data("tas.aa.mon.obs",script_name)
-     end if
+  if (obs_file_present.and.OUTPUT_PLOT_DATA) then
+     ncdf_aa_seas_obs = open_file_for_plot_data("tas.aa.seas.obs",script_name)
+     ncdf_aa_ann_obs  = open_file_for_plot_data("tas.aa.ann.obs",script_name)
+     ncdf_aa_mon_obs  = open_file_for_plot_data("tas.aa.mon.obs",script_name)
   end if
   do ee = 0,nsim-1
-     if (OUTPUT_PLOT_DATA.eq."True") then
+     if (OUTPUT_PLOT_DATA) then
        ncdf_trends_seas = open_file_for_plot_data("tas.trends.seas.ee"+ee,script_name)
        ncdf_trends_ann  = open_file_for_plot_data("tas.trends.ann.ee"+ee,script_name)
        ncdf_trends_mon  = open_file_for_plot_data("tas.trends.mon.ee"+ee,script_name)
@@ -169,7 +166,7 @@ begin
      end do
      delete([/dimT,incr/])  
 
-     if (OUTPUT_DATA.eq."True") then
+     if (OUTPUT_DATA) then
         modname = str_sub_str(names(ee)," ","_")
         bc = (/"/","'","(",")"/)
         do gg = 0,dimsizes(bc)-1
@@ -224,7 +221,7 @@ begin
         delete([/tas_aa_seas2,tas_aa_ann2/])
      end if    
 ;---Write intermediate data used for contour plots
-     if (OUTPUT_PLOT_DATA.eq."True") then
+     if (OUTPUT_PLOT_DATA) then
        ncdf_trends_seas->tas_trends_seas = tas_trends_seas
        ncdf_trends_ann->tas_trends_ann   = tas_trends_ann
        ncdf_trends_mon->tas_trends_mon   = tas_trends_mon
@@ -240,46 +237,48 @@ begin
      end if
          
 ;---Write intermediate data used for XY plots
-     if (OUTPUT_PLOT_DATA.eq."True") then
+     if (OUTPUT_PLOT_DATA) then
        ncdf_aa_seas->tas_aa_seas = tas_aa_seas
-       ncdf_aa_ann->tas_aa_ann   = tas_aa_ann
-       ncdf_aa_mon->tas_aa_mon   = tas_aa_mon
-       ncdf_rt_mon->tas_rt_mon   = tas_rt_mon
        ncdf_aa_seas->syear       = syear
-       ncdf_aa_ann->syear        = syear
-       ncdf_aa_mon->syear        = syear
-       ncdf_rt_mon->syear        = syear
        ncdf_aa_seas->eyear       = eyear
-       ncdf_aa_ann->eyear        = eyear
-       ncdf_aa_mon->eyear        = eyear
-       ncdf_rt_mon->eyear        = eyear
        ncdf_aa_seas->names       = names
+
+       ncdf_aa_ann->tas_aa_ann   = tas_aa_ann
+       ncdf_aa_ann->syear        = syear
+       ncdf_aa_ann->eyear        = eyear
        ncdf_aa_ann->names        = names
+
+       ncdf_aa_mon->tas_aa_mon   = tas_aa_mon
+       ncdf_aa_mon->syear        = syear
+       ncdf_aa_mon->eyear        = eyear
        ncdf_aa_mon->names        = names
+
+       ncdf_rt_mon->tas_rt_mon   = tas_rt_mon
+       ncdf_rt_mon->syear        = syear
+       ncdf_rt_mon->eyear        = eyear
        ncdf_rt_mon->names        = names
      end if
      delete([/tas_trends_seas,tas_trends_ann,tas_trends_mon/])  
      delete([/tas_aa_seas,tas_aa_mon,tas_aa_ann,tas_rt_mon/])
   end do
-  if (obs_file_present) then
 ;---Write intermediate obs data used for XY plots
-     if (OUTPUT_PLOT_DATA.eq."True") then
-       ncdf_aa_seas_obs->tas_aa_seas_obs = tas_aa_seas_obs
-       ncdf_aa_ann_obs->tas_aa_ann_obs   = tas_aa_ann_obs
-       ncdf_aa_mon_obs->tas_aa_mon_obs   = tas_aa_mon_obs
-       ncdf_aa_seas_obs->syear           = syear
-       ncdf_aa_ann_obs->syear            = syear
-       ncdf_aa_mon_obs->syear            = syear
-       ncdf_aa_seas_obs->eyear           = eyear
-       ncdf_aa_ann_obs->eyear            = eyear
-       ncdf_aa_mon_obs->eyear            = eyear
-       ncdf_aa_seas_obs->names           = names
-       ncdf_aa_ann_obs->names            = names
-       ncdf_aa_mon_obs->names            = names
-     end if
+  if (obs_file_present.and.OUTPUT_PLOT_DATA) then
+     ncdf_aa_seas_obs->tas_aa_seas_obs = tas_aa_seas_obs
+     ncdf_aa_seas_obs->syear           = syear
+     ncdf_aa_seas_obs->eyear           = eyear
+     ncdf_aa_seas_obs->names           = names
+
+     ncdf_aa_ann_obs->tas_aa_ann_obs   = tas_aa_ann_obs
+     ncdf_aa_ann_obs->syear            = syear
+     ncdf_aa_ann_obs->eyear            = eyear
+     ncdf_aa_ann_obs->names            = names
+
+     ncdf_aa_mon_obs->tas_aa_mon_obs   = tas_aa_mon_obs
+     ncdf_aa_mon_obs->syear            = syear
+     ncdf_aa_mon_obs->eyear            = eyear
+     ncdf_aa_mon_obs->names            = names
      delete([/tas_aa_seas_obs,tas_aa_mon_obs,tas_aa_ann_obs/])
   end if
-;/
   plot_tas_trends_timeseries()
 
   print("Finished: " + script_name)

@@ -101,7 +101,7 @@ begin
      nyr_max = max(nyr)
      obs_file_present = isfilepresent2("obs_trefht")
 
-     SCALE_TIMESERIES = getenv("SCALE_TIMESERIES")
+     SCALE_TIMESERIES = getenv_logical("SCALE_TIMESERIES")
 
      xyres = True
      xyres@gsnDraw = False
@@ -135,7 +135,7 @@ begin
      xyres@gsnRightStringOrthogonalPosF = xyres@gsnLeftStringOrthogonalPosF
      xyres@vpXF = 0.05
      xyres@vpHeightF = 0.15
-     if (SCALE_TIMESERIES.eq."True") then
+     if (SCALE_TIMESERIES) then
         xyres@vpWidthF = 0.9*((nyr(ee)*1.)/nyr_max)
      else
         xyres@vpWidthF = 0.9
@@ -242,7 +242,7 @@ undef("create_global_avg_panel_plot")
 procedure create_global_avg_panel_plot(wks,plots,title,nyr)
 local panres, nsim, nrow, ncol, nyr_max, tt, lp, SCALE_TIMESERIES
 begin
-  SCALE_TIMESERIES = getenv("SCALE_TIMESERIES")
+  SCALE_TIMESERIES = getenv_logical("SCALE_TIMESERIES")
 
   nsim = dimsizes(nyr)
   nyr_max = max(nyr)
@@ -256,7 +256,7 @@ begin
   else
      panres@gsnPanelMainFontHeightF = 0.016
   end if
-  if (SCALE_TIMESERIES.eq."True") then
+  if (SCALE_TIMESERIES) then
      tt = ind(nyr.eq.nyr_max)
      panres@gsnPanelScalePlotIndex = tt(0)
   end if
