@@ -41,7 +41,7 @@
   tar_output        = "False"               ; True = tar up all output in outdir and remove individual files, False = do not                                      
                                             ; Note: ALL files in outdir will be tarred up and then removed from the outdir directory. 
 
-  output_plot_data   = "False"           ; True = write plot data to intermediate NetCDF files (for NCL-to-Python Pilot project)
+  output_plot_data   = "True"           ; True = write plot data to intermediate NetCDF files (for NCL-to-Python Pilot project)
 
 ;---Advanced Options----------------------------------------------------------------------                                             
   zp = "ncl_scripts/"    ; directory path of CVDP NCL scripts. (must end in a "/")
