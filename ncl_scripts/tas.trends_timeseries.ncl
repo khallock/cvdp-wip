@@ -278,6 +278,15 @@ begin
        ncdf_trends_seas->tas_trends_seas = tas_trends_seas
        ncdf_trends_ann->tas_trends_ann   = tas_trends_ann
        ncdf_trends_mon->tas_trends_mon   = tas_trends_mon
+       ncdf_trends_seas->syear           = syear
+       ncdf_trends_ann->syear            = syear
+       ncdf_trends_mon->syear            = syear
+       ncdf_trends_seas->eyear           = eyear
+       ncdf_trends_ann->eyear            = eyear
+       ncdf_trends_mon->eyear            = eyear
+       ncdf_trends_seas->names           = names
+       ncdf_trends_ann->names            = names
+       ncdf_trends_mon->names            = names
      end if
      xy_djf(ee) = create_xy_plot(wks_aa_djf,tas_aa_seas(0,:),tas_aa_seas_obs(0,:),tas_trends_seas@units,names,syear,eyear,ee,"seas")
      xy_mam(ee) = create_xy_plot(wks_aa_mam,tas_aa_seas(1,:),tas_aa_seas_obs(1,:),tas_trends_seas@units,names,syear,eyear,ee,"seas")
