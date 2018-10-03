@@ -345,8 +345,8 @@ begin
   create_global_avg_panel_plot(wks_aa_mon,xy_mon,"TAS Global Average (Monthly)",nsim,nyr)
   delete(wks_aa_mon)
 
-  do gg = 0,4
-    create_global_avg_panel_plot(wks_rt_mon,xy_rt_mon(gg,:),"TAS Running " + nyr(gg) + "yr Trend (Monthly)",nsim,nyr)
+  do ff = 0,dimsizes(rt_nyr)-1
+    create_global_avg_panel_plot(wks_rt_mon,xy_rt_mon(ff,:),"TAS Running " + rt_nyr(ff) + "yr Trend (Monthly)",nsim,nyr)
   end do
   delete(wks_rt_mon)
   
