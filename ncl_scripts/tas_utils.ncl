@@ -192,3 +192,73 @@ begin
      end if
      return(plot_base)
 end
+
+;=================================================================================================
+; Create a panel plot for trends
+;
+undef("create_trends_panel_plot")
+procedure create_trends_panel_plot(wks,plots,title,nsim)
+local panres, nrow, ncol
+begin
+  panres = True
+  panres@gsnMaximize = True  
+  panres@gsnPaperOrientation = "portrait"
+  panres@gsnPanelLabelBar = True
+  panres@gsnPanelYWhiteSpacePercent = 3.0
+  panres@pmLabelBarHeightF = 0.05
+  panres@pmLabelBarWidthF = 0.65
+  panres@lbTitleOn = False
+  panres@lbBoxLineColor = "gray70"
+  panres@lbLabelFontHeightF = 0.013
+  if (nsim.le.4) then
+     if (nsim.eq.1) then
+        panres@gsnPanelMainFontHeightF = 0.022
+        panres@gsnPanelBottom = 0.50
+     else
+        panres@gsnPanelMainFontHeightF = 0.0145
+        panres@gsnPanelBottom = 0.50
+     end if
+  else
+     panres@gsnPanelMainFontHeightF = 0.016
+     panres@gsnPanelBottom = 0.05
+  end if
+  panres@lbLabelStride = 1
+  panres@gsnPanelMainString = title
+  ncol = floattointeger(sqrt(nsim))
+  nrow = (nsim/ncol)+mod(nsim,ncol)  
+  gsn_panel2(wks,plots,(/nrow,ncol/),panres)
+
+end
+
+;=================================================================================================
+; Create a panel plot for global average
+;
+undef("create_global_avg_panel_plot")
+procedure create_global_avg_panel_plot(wks,plots,title,nsim,nyr)
+local panres, nrow, ncol, nyr_max, tt, lp, SCALE_TIMESERIES
+begin
+  SCALE_TIMESERIES = getenv("SCALE_TIMESERIES")
+
+  nyr_max = max(nyr)
+
+  panres = True
+  panres@gsnMaximize = True
+  panres@gsnPaperOrientation = "portrait"
+  panres@gsnPanelYWhiteSpacePercent = 3.0  
+  if (nsim.le.5) then
+     panres@gsnPanelMainFontHeightF = 0.024
+  else
+     panres@gsnPanelMainFontHeightF = 0.016
+  end if
+  if (SCALE_TIMESERIES.eq."True") then
+     tt = ind(nyr.eq.nyr_max)
+     panres@gsnPanelScalePlotIndex = tt(0)
+  end if
+  if (nsim.le.12) then
+     lp = (/nsim,1/)
+  else
+     lp = (/nrow,ncol/)   ;(/nsim/2+1,nsim/8+1/)  
+  end if
+  panres@gsnPanelMainString = title
+  gsn_panel2(wks,plots,lp,panres)  
+end

@@ -309,119 +309,50 @@ begin
      delete([/tas_aa_seas_obs,tas_aa_mon_obs,tas_aa_ann_obs/])
   end if
   
-  panres = True
-  panres@gsnMaximize = True  
-  panres@gsnPaperOrientation = "portrait"
-  panres@gsnPanelLabelBar = True
-  panres@gsnPanelYWhiteSpacePercent = 3.0
-  panres@pmLabelBarHeightF = 0.05
-  panres@pmLabelBarWidthF = 0.65
-  panres@lbTitleOn = False
-  panres@lbBoxLineColor = "gray70"
-  panres@lbLabelFontHeightF = 0.013
-  if (nsim.le.4) then
-     if (nsim.eq.1) then
-        panres@gsnPanelMainFontHeightF = 0.022
-        panres@gsnPanelBottom = 0.50
-     else
-        panres@gsnPanelMainFontHeightF = 0.0145
-        panres@gsnPanelBottom = 0.50
-     end if
-  else
-     panres@gsnPanelMainFontHeightF = 0.016
-     panres@gsnPanelBottom = 0.05
-  end if
-  panres@lbLabelStride = 1
-  
-  panres@gsnPanelMainString = "TAS Trends (DJF)"
-  ncol = floattointeger(sqrt(nsim))
-  nrow = (nsim/ncol)+mod(nsim,ncol)  
-  gsn_panel2(wks_trends_djf,map_djf,(/nrow,ncol/),panres)
+  create_trends_panel_plot(wks_trends_mam,map_djf,"TAS Trends (DJF)",nsim)
   delete(wks_trends_djf)
   
-  panres@gsnPanelMainString = "TAS Trends (MAM)"
-  gsn_panel2(wks_trends_mam,map_mam,(/nrow,ncol/),panres)
+  create_trends_panel_plot(wks_trends_mam,map_mam,"TAS Trends (MAM)",nsim)
   delete(wks_trends_mam)
   
-  panres@gsnPanelMainString = "TAS Trends (JJA)"
-  gsn_panel2(wks_trends_jja,map_jja,(/nrow,ncol/),panres)
+  create_trends_panel_plot(wks_trends_jja,map_jja,"TAS Trends (JJA)",nsim)
   delete(wks_trends_jja)
-  
-  panres@gsnPanelMainString = "TAS Trends (SON)"
-  gsn_panel2(wks_trends_son,map_son,(/nrow,ncol/),panres)
+
+  create_trends_panel_plot(wks_trends_son,map_son,"TAS Trends (SON)",nsim)
   delete(wks_trends_son)
-  
-  panres@gsnPanelMainString = "TAS Trends (Annual)"
-  gsn_panel2(wks_trends_ann,map_ann,(/nrow,ncol/),panres)
+
+  create_trends_panel_plot(wks_trends_ann,map_ann,"TAS Trends (Annual)",nsim)
   delete(wks_trends_ann)
-  
-  panres@gsnPanelMainString = "TAS Trends (Monthly)"
-  gsn_panel2(wks_trends_mon,map_mon,(/nrow,ncol/),panres)
+
+  create_trends_panel_plot(wks_trends_mon,map_mon,"TAS Trends (Monthly)",nsim)
   delete(wks_trends_mon)
-  delete(panres)
-  
-  panres2 = True
-  panres2@gsnMaximize = True
-  panres2@gsnPaperOrientation = "portrait"
-  panres2@gsnPanelYWhiteSpacePercent = 3.0  
-  if (nsim.le.5) then
-     panres2@gsnPanelMainFontHeightF = 0.024
-  else
-     panres2@gsnPanelMainFontHeightF = 0.016
-  end if
-  if (SCALE_TIMESERIES.eq."True") then
-     tt = ind(nyr.eq.nyr_max)
-     panres2@gsnPanelScalePlotIndex = tt(0)
-     delete(tt)
-  end if
-  if (nsim.le.12) then
-     lp = (/nsim,1/)
-  else
-     lp = (/nrow,ncol/)   ;(/nsim/2+1,nsim/8+1/)  
-  end if
-  panres2@gsnPanelMainString = "TAS Global Average (DJF)"
-  gsn_panel2(wks_aa_djf,xy_djf,lp,panres2)  
+
+  create_global_avg_panel_plot(wks_aa_djf,xy_djf,"TAS Global Average (DJF)",nsim,nyr)
   delete(wks_aa_djf)
-  
-  panres2@gsnPanelMainString = "TAS Global Average (MAM)"
-  gsn_panel2(wks_aa_mam,xy_mam,lp,panres2)  
+
+  create_global_avg_panel_plot(wks_aa_mam,xy_mam,"TAS Global Average (MAM)",nsim,nyr)
   delete(wks_aa_mam)
-  
-  panres2@gsnPanelMainString = "TAS Global Average (JJA)"
-  gsn_panel2(wks_aa_jja,xy_jja,lp,panres2)  
+
+  create_global_avg_panel_plot(wks_aa_jja,xy_jja,"TAS Global Average (JJA)",nsim,nyr)
   delete(wks_aa_jja)
-  
-  panres2@gsnPanelMainString = "TAS Global Average (SON)"
-  gsn_panel2(wks_aa_son,xy_son,lp,panres2)  
+
+  create_global_avg_panel_plot(wks_aa_son,xy_son,"TAS Global Average (SON)",nsim,nyr)
   delete(wks_aa_son)
-  
-  panres2@gsnPanelMainString = "TAS Global Average (Annual)"
-  gsn_panel2(wks_aa_ann,xy_ann,lp,panres2)  
+
+  create_global_avg_panel_plot(wks_aa_ann,xy_ann,"TAS Global Average (Annual)",nsim,nyr)
   delete(wks_aa_ann)
-  
-  panres2@gsnPanelMainString = "TAS Global Average (Monthly)"
-  gsn_panel2(wks_aa_mon,xy_mon,lp,panres2)  
+
+  create_global_avg_panel_plot(wks_aa_mon,xy_mon,"TAS Global Average (Monthly)",nsim,nyr)
   delete(wks_aa_mon)
-  
-  panres2@gsnPanelMainString = "TAS Running 8yr Trend (Monthly)"
-  gsn_panel2(wks_rt_mon,xy_rt_mon(0,:),lp,panres2)  
-  
-  panres2@gsnPanelMainString = "TAS Running 10yr Trend (Monthly)"
-  gsn_panel2(wks_rt_mon,xy_rt_mon(1,:),lp,panres2)  
-  
-  panres2@gsnPanelMainString = "TAS Running 12yr Trend (Monthly)"
-  gsn_panel2(wks_rt_mon,xy_rt_mon(2,:),lp,panres2)  
-  
-  panres2@gsnPanelMainString = "TAS Running 14yr Trend (Monthly)"
-  gsn_panel2(wks_rt_mon,xy_rt_mon(3,:),lp,panres2)  
-  
-  panres2@gsnPanelMainString = "TAS Running 16yr Trend (Monthly)"
-  gsn_panel2(wks_rt_mon,xy_rt_mon(4,:),lp,panres2)  
+
+  create_global_avg_panel_plot(wks_rt_mon,xy_rt_mon(0,:),"TAS Running 8yr Trend (Monthly)",nsim,nyr)
+  create_global_avg_panel_plot(wks_rt_mon,xy_rt_mon(1,:),"TAS Running 10yr Trend (Monthly)",nsim,nyr)
+  create_global_avg_panel_plot(wks_rt_mon,xy_rt_mon(2,:),"TAS Running 12yr Trend (Monthly)",nsim,nyr)
+  create_global_avg_panel_plot(wks_rt_mon,xy_rt_mon(3,:),"TAS Running 14yr Trend (Monthly)",nsim,nyr)
+  create_global_avg_panel_plot(wks_rt_mon,xy_rt_mon(4,:),"TAS Running 16yr Trend (Monthly)",nsim,nyr)
   delete(wks_rt_mon)
   
-  delete([/nrow,ncol,lp,map_djf,map_mam,map_jja,map_son,map_ann,map_mon,xy_djf,xy_mam,xy_jja,xy_son,xy_ann,xy_mon/])
-  delete([/xy_rt_mon/])
-  delete(panres2)
+  delete([/map_djf,map_mam,map_jja,map_son,map_ann,map_mon,xy_djf,xy_mam,xy_jja,xy_son,xy_ann,xy_mon,xy_rt_mon/])
   if (isfilepresent2("obs_trefht")) then
      delete([/xy_obs_mam,xy_obs_jja,xy_obs_son,xy_obs_ann,xy_obs_mon/])
   end if
