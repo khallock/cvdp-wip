@@ -269,11 +269,10 @@ end
 ;
 undef("plot_tas_trends_timeseries")
 procedure plot_tas_trends_timeseries()
-local f, syear, eyear, names, f, nsim, nyr, nyr_max, obs_file_present
+local f, syear, eyear, names, f, nsim, nyr, obs_file_present
 begin
   PNG_SCALE        = tofloat(getenv("PNG_SCALE"))
   OUTPUT_TYPE      = getenv("OUTPUT_TYPE") 
-  COLORMAP         = toint(getenv("COLORMAP"))
   OUTDIR           = getenv("OUTDIR")
   obs_file_present = isfilepresent2("obs_trefht")
 
@@ -286,11 +285,7 @@ begin
 
   nsim = dimsizes(syear)
   nyr = eyear-syear+1
-  nyr_max = max(nyr)
 
-  pi=get_pi("float")
-  rad=(pi/180.)
-         
   wks_type = OUTPUT_TYPE
   if (wks_type.eq."png") then
      wks_type@wkWidth = 1500*PNG_SCALE
