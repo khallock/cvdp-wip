@@ -51,9 +51,11 @@ begin
 
      res@cnLevelSelectionMode = "ExplicitLevels"
      if (COLORMAP.eq.0) then
+        res@cnFillPalette = "ncl_default"
         res@cnLevels = (/-8,-6,-5,-4,-3,-2,-1,-0.5,-0.25,0,0.25,0.5,1,2,3,4,5,6,8/)
      end if
      if (COLORMAP.eq.1) then
+        res@cnFillPalette = "BlueDarkRed18"
         res@cnLevels = (/-6,-4,-3,-2,-1,-0.5,-0.25,0,0.25,0.5,1,2,3,4,6/)
      end if
 
@@ -61,13 +63,6 @@ begin
      res@cnFillOn        = True
      res@cnLinesOn       = False
      res@lbLabelBarOn    = False
-
-     if (COLORMAP.eq.0) then
-       res@cnFillPalette = "ncl_default"
-     end if
-     if (COLORMAP.eq.1) then
-       res@cnFillPalette = "BlueDarkRed18"
-     end if
 
      res@gsnLeftStringOrthogonalPosF = -0.05
      res@gsnLeftStringParallelPosF = .005
