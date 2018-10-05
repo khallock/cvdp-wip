@@ -1,0 +1,11 @@
+ismissing()      var.isnull().values.any()
+iscoord()        if ...coord... in ...array.coords...
+foo&1 = "..."    foo.rename( {foo.dims[1] : "..."} )
+missing          foo = foo.fillna(foo.atts['_FillValue'])
+addfile()        open_dataset('...', decode_time=False, mask_and_scale=False)
+
+yyyymm_time()    python implementation
+
+fspan()          np.linspace(beg,end,num)
+
+

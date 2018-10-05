@@ -1,0 +1,8 @@
+TS | ERSST v5 | ../OBS/ersstv5.185401-201812.nc | 1920 | 2017
+PSL | ERA20C_ERAI | ../OBS/era20c_erai.mon.mean.msl.190001-201802.nc | 1920 | 2017
+TREFHT | BEST | ../OBS/best.tas.185001-201801.nc | 1920 | 2017
+PRECT | GPCC | ../OBS/gpcc.precip.10.comb_v7v5mon.190101-201802.nc | 1920 | 2017
+aice_sh | NASA Bootstrap SH | ../OBS/seaice_conc_monthly_sh_NASA_Bootstrap.nsidc.v03r01.197811-201702.nc | 1979 | 2016
+aice_nh | NASA Bootstrap NH | ../OBS/seaice_conc_monthly_nh_NASA_Bootstrap.nsidc.v03r01.197811-201702.nc | 1979 | 2016
+MOC | CESM1 Forced Ocean Simulation | ../OBS/g.e11_LENS.GECOIAF.T62_g16.009.pop.h.MOC.194801-201512.nc | 1948 | 2015
+
